@@ -1,0 +1,85 @@
+/* --- Mobile-First Styles (Minimal Footer) --- */
+.site-footer {
+  background: #1e2025; 
+  color: #aaa;
+  font-family: "Inter", "Helvetica Neue", sans-serif;
+  padding-top: 40px; 
+  padding-bottom: 30px;
+  margin-top: 60px; /* Space from content (on mobile) */
+}
+
+.footer-content {
+  display: flex;
+  flex-direction: column; /* Stack on mobile */
+  align-items: center; /* Center on mobile */
+  text-align: center; /* Center text on mobile */
+  gap: 30px;
+  padding: 0 5vw; 
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.footer-column-minimal {
+  /* This is the main column for mobile */
+}
+
+.footer-logo {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 0 0 10px 0;
+}
+
+.footer-column-minimal p {
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+/* --- Hides extra link columns on mobile --- */
+.footer-column-links {
+  display: none; 
+}
+
+
+/* --- Tablet & Desktop (768px and wider) --- */
+@media (min-width: 768px) {
+  
+  .site-footer {
+     /* On desktop, the newsletter has margin, so footer doesn't need it */
+    margin-top: 0;
+  }
+
+  .footer-content {
+    flex-direction: row; /* Side-by-side on desktop */
+    justify-content: space-between;
+    align-items: flex-start; /* Align to top */
+    text-align: left; /* Align text left */
+    gap: 20px;
+  }
+  
+  /* --- Show the hidden link columns again --- */
+  .footer-column-links {
+    display: block; 
+  }
+
+  .footer-column-links h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 16px;
+  }
+  
+  .footer-column-links a {
+    display: block;
+    color: #aaa;
+    text-decoration: none;
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+    transition: color 0.2s ease;
+  }
+  
+  .footer-column-links a:hover {
+    color: #fff;
+  }
+}

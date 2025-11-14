@@ -1,0 +1,149 @@
+/* --- Base Styling (CHANGED) --- */
+.collections {
+  width: 100%;
+  margin-top: 60px;
+  /* CHANGED: Matched NewArrivals background */
+  background: #fff;
+  padding: 40px 5vw;
+  font-family: "Inter", "Helvetica Neue", sans-serif;
+}
+
+/* --- Section Header (CHANGED) --- */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center; /* CHANGED: To match NewArrivals */
+  margin-bottom: 20px;
+}
+
+.section-header h2 {
+  /* CHANGED: Matched NewArrivals font style */
+  font-size: clamp(1.4rem, 2vw, 1.8rem);
+  font-weight: 600;
+  /* Removed Lora font for consistency */
+  color: #333;
+}
+
+/* --- "View More" Link (CHANGED) --- */
+.view-more {
+  text-decoration: none;
+  background: transparent;
+  border: none;
+  font-size: clamp(0.9rem, 1.5vw, 1rem);
+  /* CHANGED: Matched NewArrivals color */
+  color: #333;
+  cursor: pointer;
+  font-weight: 500;
+  transition: color 0.3s ease;
+  /* Removed all old brown-theme styles */
+}
+
+.view-more:hover {
+  /* CHANGED: Matched NewArrivals hover */
+  color: #000;
+  text-decoration: underline;
+}
+
+/* --- Horizontal scroll (CHANGED) --- */
+.collection-slider {
+  display: flex;
+  /* CHANGED: Matched NewArrivals gap */
+  gap: 18px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  padding: 10px 0 20px 0;
+}
+
+.collection-slider::-webkit-scrollbar {
+  display: none;
+}
+.collection-slider {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+/* --- Card styling (CHANGED to CIRCLE) --- */
+.collection-card {
+  /* --- KEY CHANGE 1: "Two cards visible in mobile" --- */
+  /* Matched NewArrivals 2-card mobile layout */
+  flex: 0 0 calc(50% - 9px);
+  
+  scroll-snap-align: start;
+  display: block; 
+  text-decoration: none; 
+
+  /* The card itself is now just a container */
+  background: transparent;
+  overflow: visible;
+  border-radius: 0;
+  box-shadow: none;
+
+  /* This is our smooth resize transition */
+  transition: transform 0.3s ease, 
+              flex-basis 0.4s ease;
+}
+
+.collection-card img {
+  width: 100%;
+  /* --- KEY CHANGE 2: "Different Shape" --- */
+  /* This makes the image a circle */
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 50%; /* This is the magic! */
+  
+  /* Add shadow to the image, not the card */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.07);
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+
+.collection-card h3 {
+  /* This is the text *below* the circle */
+  padding: 0;
+  margin-top: 16px; /* Space from circle */
+  font-size: 0.95rem; /* Matched NewArrivals */
+  font-weight: 500;
+  color: #333;
+  text-align: center;
+  /* Removed Lora font for consistency */
+}
+
+/* --- Hover (CHANGED) --- */
+.collection-card:hover {
+  /* Lift the whole card */
+  transform: translateY(-5px);
+}
+
+.collection-card:hover img {
+  /* Make the image shadow bigger */
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.collection-card:hover h3 {
+  color: #000;
+}
+
+
+/* --- Media Queries (CHANGED) --- */
+/* These are now 1-to-1 copies of NewArrivals' queries */
+
+/* 🟦 Medium screens (≥768px): show 3 cards */
+@media (min-width: 768px) {
+  .collection-card {
+    flex: 0 0 calc(33.33% - 12px);
+  }
+}
+
+/* 🟨 Large desktops (≥1200px): show 4 cards that GROW */
+@media (min-width: 1200px) {
+  .collection-card {
+    flex: 0 0 calc(25% - 13.5px);
+  }
+}
+
+/* 🟥 Ultra-wide (≥1600px): just increase the side margins */
+@media (min-width: 1600px) {
+  .collections {
+    padding: 0 8vw;
+  }
+}

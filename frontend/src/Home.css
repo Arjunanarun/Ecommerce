@@ -1,0 +1,199 @@
+/* --default-color:#00583b; */
+
+
+.hero {
+  height: 90vh;
+  position: relative;
+  background: url("/From Our Fields to Your Table – With Care. (3).png") 
+              no-repeat center/cover;
+}
+
+.hero .btn {
+  position: absolute;
+  height: 4rem;
+  width: 8rem;
+  top: 75%;
+  left: 80%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+}
+
+
+.category{
+    padding: 1.2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 1rem;
+    align-items: center;
+    /* border: 2px solid green; */
+}
+.category-main{
+    font-size: 2.3em;
+    margin: 0;
+    padding-top: 1rem;
+}
+.category-descrip{
+    font-size: 1.5rem;
+    margin: 0;
+    padding-bottom: 1rem;
+}
+
+.category-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit,minmax(30px,1fr));
+  gap: .3rem;
+  padding: 0rem;
+    justify-content: center;
+    width: 100%;
+}
+
+.category-list-li {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0rem;
+  border-radius: 50%;
+  /* border-top: #00583b; */
+  /* box-shadow: 0 3px 8px rgba(0,0,0,0.12); */
+  /* background: rgba(234, 238, 235, 0.465); */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  text-align: center;
+}
+
+.category-img {
+  width: 80px;     /* smaller image */
+  height: 80px;
+  border-radius: 50%;   /* ✅ makes it a circle */
+  object-fit: cover;
+  margin-bottom: 0.5rem;
+}
+
+.category-list-li p {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #00583b;
+  margin: 0;
+}
+
+.category-list-li:hover {
+  transform: translateY(-5px) scale(1.05);
+  box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+  cursor: pointer;
+}
+
+.category-shop{
+    padding:.8em 1.2em;
+    font-size:1.1em; 
+     transition: all 0.3s ease-in; 
+      border: none;         /* remove default border */
+  outline: none;        /* remove focus outline (not recommended for accessibility unless replaced) */
+  background-color:  #00583b; 
+  color: white;
+  border-radius: 20px;
+}
+
+.category-shop:hover{
+    cursor: pointer;
+    background-color: rgb(7, 56, 7);
+    transform: scale(1.02);
+}
+
+
+
+/* Product CSS*/
+.products {
+  padding: 2rem;
+  text-align: center;
+}
+
+.products-title {
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+  color: #00583b;
+}
+
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 2rem;
+}
+
+.product-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.product-card:hover {
+  transform: translateY(-5px) scale(1.03);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+}
+
+.product-img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 10px;
+  margin-bottom: 0.8rem;
+}
+
+.product-card h3 {
+  font-size: 1.1rem;
+  color: #00583b;
+  margin: 0.5rem 0;
+}
+
+.product-desc {
+  font-size: 0.9rem;
+  color: #555;
+  margin: 0.5rem 0;
+}
+
+.product-price {
+  font-weight: bold;
+  font-size: 1.1rem;
+  color: #c47c24;
+  margin: 0.5rem 0;
+}
+
+.product-btn {
+  margin-top: auto;
+  padding: 0.6em 1.2em;
+  font-size: 0.95rem;
+  border: none;
+  outline: none;
+  background-color: #00583b;
+  color: white;
+  border-radius: 20px;
+  transition: background 0.3s ease, transform 0.2s ease;
+  cursor: pointer;
+}
+
+.product-btn:hover {
+  background-color: rgb(7, 56, 7);
+  transform: scale(1.05);
+}
+
+
+@media (max-width: 728px) {
+  .hero {
+    height: 70vh;   /* shorter hero on mobiles */
+    min-height: 200px;
+  }
+
+  .category-list{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  .category-list-li{
+    flex: 1;
+  }
+}

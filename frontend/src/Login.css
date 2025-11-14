@@ -1,0 +1,176 @@
+/* We wrap everything in a phone-sized container to match the screenshot */
+.auth-page {
+  width: 375px; 
+  height: 812px;
+  background-color: #fefcf8; /* Light beige background */
+  border-radius: 40px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  overflow: hidden; /* This is key to keeping the curves contained */
+  position: relative; /* For positioning the header */
+}
+
+/* This is the blue wavy header */
+.auth-header {
+  height: 350px;
+  /* The main background color */
+  background-color: #7184f4;
+  /* The large border-radius creates the curved "wave" effect */
+  border-bottom-left-radius: 100px;
+  border-bottom-right-radius: 100px;
+  position: relative;
+  
+  /* These are decorative elements from the image */
+  background-image:
+    url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='30' cy='30' r='15' fill='%23f9d77a'/%3E%3C/svg%3E"), /* Yellow circle */
+    url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 0 L25 15 L40 20 L25 25 L20 40 L15 25 L0 20 L15 15 Z' fill='%23ffffff' opacity='0.5'/%3E%3C/svg%3E"), /* White star */
+    url("data:image/svg+xml,%3Csvg width='50' height='50' viewBox='0 0 50 50' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='25' cy='25' r='10' fill='%23f4a261' opacity='0.8'/%3E%3C/svg%3E"); /* Orange circle */
+  background-position:
+    20px 40px,
+    300px 60px,
+    150px 150px;
+  background-repeat: no-repeat;
+}
+
+/* This container holds the card, social buttons, and toggle link */
+.auth-content {
+  padding: 0 24px;
+  position: relative;
+  /* This negative margin pulls the content up to overlap the blue header */
+  margin-top: -240px; 
+  z-index: 10;
+}
+
+/* The main white card for the form */
+.auth-card {
+  background-color: #ffffff;
+  border-radius: 30px;
+  padding: 32px 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  text-align: center;
+}
+
+.auth-card h2 {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  color: #333;
+}
+
+/* Styling for the form and its inputs */
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.input-group input {
+  width: 100%;
+  border: none;
+  /* We only want the bottom border */
+  border-bottom: 1px solid #eee;
+  padding: 12px 2px;
+  font-size: 16px;
+  background-color: transparent;
+  /* Fix for input not expanding fully in flexbox */
+  box-sizing: border-box; 
+}
+
+.input-group input::placeholder {
+  color: #aaa;
+}
+
+/* Change border color on focus */
+.input-group input:focus {
+  outline: none;
+  border-bottom-color: #7184f4;
+}
+
+/* The main blue action button */
+.auth-button {
+  background-color: #6a7ffb;
+  color: white;
+  border: none;
+  padding: 16px;
+  border-radius: 30px; /* Fully rounded button */
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 16px;
+  box-shadow: 0 4px 15px rgba(106, 127, 251, 0.4);
+  transition: background-color 0.3s ease;
+}
+
+.auth-button:hover {
+  background-color: #586af8;
+}
+
+/* Links inside the card */
+.forgot-password {
+  display: block;
+  margin-top: 16px;
+  color: #6a7ffb;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.terms {
+  font-size: 12px;
+  color: #999;
+  margin-top: 16px;
+  line-height: 1.5;
+}
+
+.terms a {
+  color: #6a7ffb;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+/* Container for Google/Facebook buttons */
+.social-logins {
+  display: flex;
+  gap: 16px;
+  margin-top: 32px;
+}
+
+.social-btn {
+  flex: 1; /* Make them equal width */
+  padding: 12px;
+  border: 1px solid #ddd;
+  background-color: #fff;
+  border-radius: 30px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px; /* Space between icon and text */
+  transition: box-shadow 0.3s ease;
+}
+
+.social-btn:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* The text at the very bottom to toggle views */
+.auth-toggle {
+  margin-top: 32px;
+  text-align: center;
+  font-size: 15px;
+  color: #777;
+}
+
+.auth-toggle span {
+  color: #6a7ffb;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* Style for your error message */
+.error-message {
+  color: #e74c3c; /* Red color */
+  font-size: 14px;
+  margin-top: 16px;
+}
