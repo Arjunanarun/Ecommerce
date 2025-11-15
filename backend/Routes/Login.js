@@ -58,6 +58,7 @@ router.post('/', async (req, res) => {
         email: user.email,
         mobilenum: user.mobilenum,
         username: user.username,
+        isAdmin:user.isAdmin,
       },
     });
 

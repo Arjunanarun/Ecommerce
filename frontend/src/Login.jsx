@@ -88,7 +88,12 @@ const Login = () => {
             // Your login route (the corrected one) returns { token, user }
             login(res.data); // Pass { token, user } to context
             console.log("the response is", res.data.token);
-
+            // Redirect based on admin status
+            if (res.data.user && res.data.user.isAdmin) {
+                navigate("/admin");
+            } else {
+                navigate("/user");
+            }
         } catch (err) {
             // === THIS IS THE FIX ===
             // Safely get the error message

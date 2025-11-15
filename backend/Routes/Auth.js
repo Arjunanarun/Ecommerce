@@ -78,7 +78,6 @@ router.get('/google/callback', async (req, res) => {
     });
     
     console.log("Google user logged in:", user.email);
-    res.status(201).send({token});
     res.redirect('http://localhost:5173/'); // Redirect to your frontend
 
   } catch (err) {

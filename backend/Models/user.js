@@ -39,6 +39,13 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: null,
     },
+    // --- THIS IS THE NEW FIELD ---
+    isAdmin: {
+      type: Boolean,
+      required: true,
+      default: false, // Default all new users to NOT be admins
+    },
+    // -----------------------------
     // Your forget password fields
     otp: {
       type: String,
@@ -57,6 +64,8 @@ const userSchema = new mongoose.Schema(
 // Removed the .pre('save') hook for hashing
 // Removed the .matchPassword() method
 
-const User = mongoose.model('User', userSchema);
+// === THIS IS THE FIX ===
+// Check if the model already exists before compiling it
+const User = mongoose.models.User || mongoose.model('User', userSchema);
 
 export default User;
