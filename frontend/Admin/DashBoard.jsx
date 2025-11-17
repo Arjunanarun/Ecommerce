@@ -125,6 +125,7 @@ const ProductModal = ({ product, onClose, onSave, categories }) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
+  
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -456,7 +457,10 @@ const ProductsView = ({ user }) => {
         const found = categories.find(c => c.name === categoryId);
         if (found) categoryId = found._id;
       }
-      const payload = { ...productData, category: categoryId, user: user._id };
+      const payload = { ...productData, category: categoryId, user: user._id , images: [{
+        url:productData.image,
+        alt: productData.name
+      }]};
       if (isEditing) {
         await axios.put(cleanUrl(`/api/products/${productData._id}`), payload, {
           withCredentials: true
@@ -532,8 +536,8 @@ const ProductsView = ({ user }) => {
                 <tr key={product._id}>
                   <td>
                     <img
-                      src={product.image}
-                      alt={product.name}
+                      src={product.images?.[0]?.url}
+                      alt={product.images?.[0]?.alt}
                       className="table-image"
                       onError={(e) => {
                         e.target.onerror = null;

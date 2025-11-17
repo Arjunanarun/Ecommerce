@@ -50,7 +50,10 @@ router.post('/', protect, admin, async (req, res) => {
       name,
       price,
       user: req.user._id, // Set admin user as creator
-      image,
+      images:[{
+        url:image,
+        alt:name
+      }], 
       brand: brand || 'No Brand',
       category,
       stock: countInStock, // Map frontend countInStock to backend stock
