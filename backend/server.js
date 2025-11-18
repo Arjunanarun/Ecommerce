@@ -1,11 +1,13 @@
 import express from 'express';
 import dotenv from 'dotenv';
-dotenv.config(); //load env file to use the values
-const app = express();
+dotenv.config();
+
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-// --- Old Auth Routes ---
+// --- Auth Routes ---
 import loginRoute from './Routes/Login.js';
 import registerRoute from './Routes/Register.js';
 import authRoute from './Routes/Auth.js';
@@ -17,36 +19,44 @@ import userRoutes from './Routes/User.js';
 import categoryRoutes from './Routes/Category.js';
 import uploadRoutes from './Routes/Upload.js';
 
-// --- Database Connection ---
+// --- DB Connection ---
 import { DatabaseConnect } from './utils/db.js';
 
-const PORT = process.env.PORT || 5000;
-DatabaseConnect(); // Establish Database Connection
+const app = express();
 
-app.use(express.json()); // for Parsing the Request and Response
+// Fix dirname for ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const PORT = process.env.PORT || 5000;
+DatabaseConnect();
+
+app.use(express.json());
 app.use(cookieParser());
-app.use(express.urlencoded({ extended: true })); // for Reading data from url form
+app.use(express.urlencoded({ extended: true }));
+
 app.use(
   cors({
     origin: 'http://localhost:5173',
     credentials: true,
   })
-); //Cross Origin Resource sharing
+);
 
 // --- API Routes ---
-
-// The frontend calls /api/products, /api/orders, /api/users
-// These routes MUST be protected by your 'protect' and 'admin' middleware
 app.use('/api/products', productRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/upload', uploadRoutes);
-app.use('/uploads', express.static('uploads'));
+
+// ✅ **THIS IS THE FIX**
+// Serve the 'uploads' folder from the project root (one level up from 'backend')
+app.use(
+  '/uploads',
+  express.static(path.join(__dirname, '../uploads'))
+);
 
 // --- Old Auth Routes ---
-// The frontend calls /login, /register, /auth
-// These routes are public and handle the login/signup process
 app.use('/login', loginRoute);
 app.use('/register', registerRoute);
 app.use('/auth', authRoute);
@@ -57,5 +67,5 @@ app.post('/test', (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`server running at ${PORT}`);
+  console.log(`Server running at port ${PORT}`);
 });

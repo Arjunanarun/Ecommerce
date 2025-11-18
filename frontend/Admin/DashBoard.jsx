@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useContext } from 'react'; // Added useContext
-import axios from 'axios';
+import React, { useState, useEffect, useContext } from "react";
+import axios from "axios";
 
-// Import 'react-icons'
+// Icons
 import {
   FiLayout,
   FiShoppingCart,
@@ -14,35 +14,34 @@ import {
   FiX,
   FiLoader,
   FiAlertCircle,
-} from 'react-icons/fi';
+} from "react-icons/fi";
 
-// Import the CSS file
-import './DashBoard.css';
+// CSS
+import "./DashBoard.css";
 
-// Import your AuthContext
-import { AuthContext } from '../Context/AuthContext';
+// Auth
+import { AuthContext } from "../Context/AuthContext";
 
 const BaseUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
-// Helper function to safely join URLs
+// FIXED CLEAN URL
 const cleanUrl = (path) => {
+  if (!path || !path.trim()) return null;
+  if (path.startsWith("http")) return path;
   return `${BaseUrl.replace(/\/$/, "")}/${path.replace(/^\//, "")}`;
 };
 
+
 /* ================================================================
    SIDEBAR
-=================================================================== */
+================================================================ */
 const Sidebar = ({ view, setView, user }) => {
   const navItems = [
-    { name: 'Dashboard', icon: <FiLayout />, view: 'dashboard' },
-    { name: 'Orders', icon: <FiShoppingCart />, view: 'orders' },
-    { name: 'Products', icon: <FiPackage />, view: 'products' },
-    { name: 'Users', icon: <FiUsers />, view: 'users' },
+    { name: "Dashboard", icon: <FiLayout />, view: "dashboard" },
+    { name: "Orders", icon: <FiShoppingCart />, view: "orders" },
+    { name: "Products", icon: <FiPackage />, view: "products" },
+    { name: "Users", icon: <FiUsers />, view: "users" },
   ];
-  console.log("Logged-in user:", user);
-  console.log("Sidebar user prop:", user);
-  console.log("Sidebar user.username:", user?.username);
-  console.log("Sidebar user.email:", user?.email);
 
   return (
     <div className="sidebar">
@@ -56,7 +55,8 @@ const Sidebar = ({ view, setView, user }) => {
             <li key={item.name}>
               <button
                 onClick={() => setView(item.view)}
-                className={`sidebar-nav-item ${view === item.view ? 'active' : ''}`}
+                className={`sidebar-nav-item ${view === item.view ? "active" : ""
+                  }`}
               >
                 <span className="sidebar-nav-icon">{item.icon}</span>
                 <span className="sidebar-nav-text">{item.name}</span>
@@ -66,9 +66,8 @@ const Sidebar = ({ view, setView, user }) => {
         </ul>
       </nav>
 
-      {/* Footer */}
       <div className="sidebar-footer">
-        <p className="sidebar-user-name">{user?.username || 'Admin User'}</p>
+        <p className="sidebar-user-name">{user?.username || "Admin"}</p>
         <p className="sidebar-user-email">{user?.email}</p>
       </div>
     </div>
@@ -77,9 +76,8 @@ const Sidebar = ({ view, setView, user }) => {
 
 /* ================================================================
    REUSABLE COMPONENTS
-=================================================================== */
-
-const StatCard = ({ title, value, icon, iconClass = '' }) => (
+================================================================ */
+const StatCard = ({ title, value, icon, iconClass = "" }) => (
   <div className="stat-card">
     <div className="stat-card-info">
       <p className="stat-card-title">{title}</p>
@@ -105,64 +103,66 @@ const ErrorDisplay = ({ message }) => (
 
 /* ================================================================
    PRODUCT MODAL
-=================================================================== */
+================================================================ */
 const ProductModal = ({ product, onClose, onSave, categories }) => {
   const [formData, setFormData] = useState(
     product || {
-      _id: '',
-      name: '',
+      _id: "",
+      name: "",
       price: 0,
-      image: '',
+      image: "",
       images: [],
-      category: '',
-      countInStock: 0,
-      description: '',
+      category: "",
+      stock: 0,
+      description: "",
     }
   );
+
   const [imageFile, setImageFile] = useState(null);
   const [uploading, setUploading] = useState(false);
-  const [uploadError, setUploadError] = useState('');
-  const [uploadSuccess, setUploadSuccess] = useState('');
+  const [uploadError, setUploadError] = useState("");
+  const [uploadSuccess, setUploadSuccess] = useState("");
 
   const isEditing = !!product;
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
-  
 
-  // Handle file input change
   const handleFileChange = (e) => {
     setImageFile(e.target.files[0]);
-    setUploadError('');
-    setUploadSuccess('');
+    setUploadError("");
+    setUploadSuccess("");
   };
 
-  // Upload image to backend and set image URL
   const handleUpload = async (e) => {
     e.preventDefault();
     if (!imageFile) return;
+
     setUploading(true);
-    setUploadError('');
-    setUploadSuccess('');
-    const formDataUpload = new FormData();
-    formDataUpload.append('image', imageFile);
+    setUploadError("");
+    setUploadSuccess("");
+
+    const fd = new FormData();
+    fd.append("image", imageFile);
+
     try {
-      const res = await axios.post(cleanUrl('/api/upload'), formDataUpload, {
-        headers: { 'Content-Type': 'multipart/form-data' },
+      const res = await axios.post(cleanUrl("/api/upload"), fd, {
+        headers: { "Content-Type": "multipart/form-data" },
         withCredentials: true,
       });
+
       setFormData((prev) => ({ ...prev, image: res.data.url }));
-      setUploadSuccess('Image uploaded successfully!');
+      setUploadSuccess("Image uploaded successfully!");
     } catch (err) {
-      setUploadError('Image upload failed: ' + (err.response?.data?.message || err.message));
+      setUploadError(
+        "Image upload failed: " + (err.response?.data?.message || err.message)
+      );
     } finally {
       setUploading(false);
     }
   };
 
-  // Handle form submit
   const handleSubmit = (e) => {
     e.preventDefault();
     onSave(formData, isEditing);
@@ -172,9 +172,12 @@ const ProductModal = ({ product, onClose, onSave, categories }) => {
     <div className="modal-overlay">
       <div className="modal">
         <div className="modal-header">
-          <h3>{isEditing ? 'Edit Product' : 'Add Product'}</h3>
-          <button className="modal-close" onClick={onClose}><FiX /></button>
+          <h3>{isEditing ? "Edit Product" : "Add Product"}</h3>
+          <button className="modal-close" onClick={onClose}>
+            <FiX />
+          </button>
         </div>
+
         <div className="modal-body">
           <form onSubmit={handleSubmit}>
             {/* Name */}
@@ -185,7 +188,6 @@ const ProductModal = ({ product, onClose, onSave, categories }) => {
                 name="name"
                 value={formData.name}
                 onChange={handleInputChange}
-                className="form-input"
                 required
               />
             </div>
@@ -199,18 +201,16 @@ const ProductModal = ({ product, onClose, onSave, categories }) => {
                   name="price"
                   value={formData.price}
                   onChange={handleInputChange}
-                  className="form-input"
                   required
                 />
               </div>
               <div className="form-group">
-                <label>Count In Stock</label>
+                <label>Stock</label>
                 <input
                   type="number"
-                  name="countInStock"
+                  name="stock"
                   value={formData.stock}
                   onChange={handleInputChange}
-                  className="form-input"
                   required
                 />
               </div>
@@ -223,12 +223,13 @@ const ProductModal = ({ product, onClose, onSave, categories }) => {
                 name="category"
                 value={formData.category}
                 onChange={handleInputChange}
-                className="form-input"
                 required
               >
                 <option value="">Select Category</option>
-                {categories.map(cat => (
-                  <option key={cat._id} value={cat._id}>{cat.name}</option>
+                {categories.map((cat) => (
+                  <option key={cat._id} value={cat._id}>
+                    {cat.name}
+                  </option>
                 ))}
               </select>
             </div>
@@ -241,30 +242,38 @@ const ProductModal = ({ product, onClose, onSave, categories }) => {
                 name="image"
                 value={formData.image}
                 onChange={handleInputChange}
-                className="form-input"
               />
             </div>
 
-            {/* Image Upload */}
+            {/* Upload Image */}
             <div className="form-group">
               <label>Upload Image</label>
               <input type="file" accept="image/*" onChange={handleFileChange} />
               <button
                 type="button"
-                className="button button-secondary"
                 onClick={handleUpload}
                 disabled={uploading || !imageFile}
-                style={{ marginLeft: '8px' }}
+                className="button button-secondary"
+                style={{ marginLeft: "10px" }}
               >
-                {uploading ? 'Uploading...' : 'Upload'}
+                {uploading ? "Uploading..." : "Upload"}
               </button>
-              {uploadError && <div className="error-message">{uploadError}</div>}
-              {uploadSuccess && <div className="success-message">{uploadSuccess}</div>}
-              {formData.image && (
-                <div style={{ marginTop: '8px' }}>
-                  <img src={formData.image} alt="Preview" style={{ maxWidth: '100px', maxHeight: '100px' }} />
-                </div>
+
+              {uploadError && (
+                <div className="error-message">{uploadError}</div>
               )}
+              {uploadSuccess && (
+                <div className="success-message">{uploadSuccess}</div>
+              )}
+
+              {formData.image?.trim() && (
+                <img
+                  src={cleanUrl(formData.image)}
+                  alt="Preview"
+                  style={{ width: "100px", marginTop: "10px" }}
+                />
+              )}
+
             </div>
 
             {/* Description */}
@@ -274,13 +283,16 @@ const ProductModal = ({ product, onClose, onSave, categories }) => {
                 name="description"
                 value={formData.description}
                 onChange={handleInputChange}
-                className="form-textarea"
                 rows="4"
               ></textarea>
             </div>
 
             <div className="form-actions">
-              <button type="button" className="button button-secondary" onClick={onClose}>
+              <button
+                type="button"
+                className="button button-secondary"
+                onClick={onClose}
+              >
                 Cancel
               </button>
               <button type="submit" className="button button-primary">
@@ -296,7 +308,7 @@ const ProductModal = ({ product, onClose, onSave, categories }) => {
 
 /* ================================================================
    DASHBOARD VIEW
-=================================================================== */
+================================================================ */
 const DashboardView = () => {
   const [stats, setStats] = useState({
     totalRevenue: 0,
@@ -306,40 +318,41 @@ const DashboardView = () => {
   });
 
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    const fetchDashboardData = async () => {
+    const loadData = async () => {
       try {
         setLoading(true);
 
         const [ordersRes, usersRes, productsRes] = await Promise.all([
-          axios.get(cleanUrl('/api/orders'), { withCredentials: true }),
-          axios.get(cleanUrl('/api/users'), { withCredentials: true }),
-          axios.get(cleanUrl('/api/products'), { withCredentials: true }),
+          axios.get(cleanUrl("/api/orders"), { withCredentials: true }),
+          axios.get(cleanUrl("/api/users"), { withCredentials: true }),
+          axios.get(cleanUrl("/api/products"), { withCredentials: true }),
         ]);
 
         const orders = ordersRes.data;
         const users = usersRes.data;
         const products = productsRes.data;
 
-        const totalRevenue = orders
-          .filter(o => o.isPaid)
-          .reduce((acc, order) => acc + order.totalPrice, 0);
+        const revenue = orders
+          .filter((o) => o.isPaid)
+          .reduce((sum, o) => sum + o.totalPrice, 0);
 
         const newCustomers = users.filter(
-          u => new Date(u.createdAt) > new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
+          (u) =>
+            new Date(u.createdAt) >
+            new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
         ).length;
 
-        const lowStock = products.filter(p => p.countInStock <= 5).length;
+        const lowStock = products.filter((p) => p.stock <= 5).length;
 
         setStats({
-          totalRevenue: totalRevenue.toFixed(2),
+          totalRevenue: revenue.toFixed(2),
           totalOrders: orders.length,
           newCustomers,
           lowStock,
         });
-
       } catch (err) {
         setError(err.message);
       } finally {
@@ -347,7 +360,7 @@ const DashboardView = () => {
       }
     };
 
-    fetchDashboardData();
+    loadData();
   }, []);
 
   if (loading) return <LoadingSpinner />;
@@ -355,14 +368,33 @@ const DashboardView = () => {
 
   return (
     <div className="page-view">
-      
       <h2 className="page-title">Dashboard</h2>
 
       <div className="stat-card-grid">
-        <StatCard title="Total Revenue" value={`$${stats.totalRevenue}`} icon={<FiDollarSign />} iconClass="icon-green" />
-        <StatCard title="Total Orders" value={stats.totalOrders} icon={<FiShoppingCart />} iconClass="icon-blue" />
-        <StatCard title="New Customers (30d)" value={stats.newCustomers} icon={<FiUsers />} iconClass="icon-purple" />
-        <StatCard title="Low Stock Items" value={stats.lowStock} icon={<FiPackage />} iconClass="icon-red" />
+        <StatCard
+          title="Total Revenue"
+          value={`₹${stats.totalRevenue}`}
+          icon={<FiDollarSign />}
+          iconClass="icon-green"
+        />
+        <StatCard
+          title="Total Orders"
+          value={stats.totalOrders}
+          icon={<FiShoppingCart />}
+          iconClass="icon-blue"
+        />
+        <StatCard
+          title="New Customers (30d)"
+          value={stats.newCustomers}
+          icon={<FiUsers />}
+          iconClass="icon-purple"
+        />
+        <StatCard
+          title="Low Stock Items"
+          value={stats.lowStock}
+          icon={<FiPackage />}
+          iconClass="icon-red"
+        />
       </div>
     </div>
   );
@@ -370,17 +402,17 @@ const DashboardView = () => {
 
 /* ================================================================
    ORDERS VIEW
-=================================================================== */
+================================================================ */
 const OrdersView = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    const fetchOrders = async () => {
+    const loadOrders = async () => {
       try {
         setLoading(true);
-        const { data } = await axios.get(cleanUrl('/api/orders'), {
+        const { data } = await axios.get(cleanUrl("/api/orders"), {
           withCredentials: true,
         });
         setOrders(data);
@@ -391,7 +423,7 @@ const OrdersView = () => {
       }
     };
 
-    fetchOrders();
+    loadOrders();
   }, []);
 
   if (loading) return <LoadingSpinner />;
@@ -399,39 +431,52 @@ const OrdersView = () => {
 
   return (
     <div className="page-view">
-      <h2 className="page-title">Orders Management</h2>
+      <h2 className="page-title">Orders</h2>
 
       <div className="table-container">
-        {orders.length === 0 ? (
-          <p>No orders found.</p>
-        ) : (
-          <table className="table">
-            <thead>
-              <tr>
-                <th>Order ID</th>
-                <th>Customer</th>
-                <th>Date</th>
-                <th>Total</th>
-                <th>Paid (COD)</th>
-                <th>Delivered</th>
+        <table className="table">
+          <thead>
+            <tr>
+              <th>Order ID</th>
+              <th>User</th>
+              <th>Date</th>
+              <th>Total</th>
+              <th>Paid</th>
+              <th>Delivered</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {orders.map((o) => (
+              <tr key={o._id}>
+                <td>{o._id}</td>
+                <td>{o.user?.email}</td>
+                <td>{new Date(o.createdAt).toLocaleDateString()}</td>
+                <td>₹{o.totalPrice}</td>
+                <td>
+                  {o.isPaid ? (
+                    <span className="status-badge status-paid">Paid</span>
+                  ) : (
+                    <span className="status-badge status-not-paid">
+                      Not Paid
+                    </span>
+                  )}
+                </td>
+                <td>
+                  {o.isDelivered ? (
+                    <span className="status-badge status-delivered">
+                      Delivered
+                    </span>
+                  ) : (
+                    <span className="status-badge status-processing">
+                      Processing
+                    </span>
+                  )}
+                </td>
               </tr>
-            </thead>
-
-            <tbody>
-              {orders.map(order => (
-                <tr key={order._id}>
-                  <td>{order._id}</td>
-                  <td>{order.user?.email || order.user}</td>
-                  <td>{new Date(order.createdAt).toLocaleDateString()}</td>
-                  <td>${order.totalPrice.toFixed(2)}</td>
-                  <td>{order.isPaid ? <span className="status-badge status-paid">Paid</span> : <span className="status-badge status-not-paid">Not Paid</span>}</td>
-                  <td>{order.isDelivered ? <span className="status-badge status-delivered">Delivered</span> : <span className="status-badge status-processing">Processing</span>}</td>
-                </tr>
-              ))}
-            </tbody>
-
-          </table>
-        )}
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );
@@ -439,19 +484,19 @@ const OrdersView = () => {
 
 /* ================================================================
    PRODUCTS VIEW
-=================================================================== */
+================================================================ */
 const ProductsView = ({ user }) => {
   const [products, setProducts] = useState([]);
-  const [categories, setCategories] = useState([]); // Store categories
+  const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [productToEdit, setProductToEdit] = useState(null);
 
   const fetchProducts = async () => {
     try {
       setLoading(true);
-      const { data } = await axios.get(cleanUrl('/api/products'), {
+      const { data } = await axios.get(cleanUrl("/api/products"), {
         withCredentials: true,
       });
       setProducts(data);
@@ -462,87 +507,49 @@ const ProductsView = ({ user }) => {
     }
   };
 
-  // Fetch categories from backend
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const { data } = await axios.get(cleanUrl('/api/categories'), {
-          withCredentials: true,
-        });
-        setCategories(data);
-      } catch (err) {
-        // Optionally handle error
-      }
-    };
-    fetchCategories();
-  }, []);
+  const fetchCategories = async () => {
+    try {
+      const { data } = await axios.get(cleanUrl("/api/categories"), {
+        withCredentials: true,
+      });
+      setCategories(data);
+    } catch { }
+  };
 
   useEffect(() => {
     fetchProducts();
+    fetchCategories();
   }, []);
-
-  const handleCreateNew = () => {
-    setProductToEdit(null);
-    setShowModal(true);
-  };
-
-  const handleEdit = (product) => {
-    setProductToEdit(product);
-    setShowModal(true);
-  };
-
-  const handleDelete = async(productId) => {
-    if (window.confirm("Are you sure?")) {
-      try {
-        await axios.delete(cleanUrl(`/api/products/${productId}`), {
-          withCredentials: true,
-        });
-        fetchProducts();
-      } catch (err) {
-        alert(err.message);
-      }
-    }
-  };
 
   const handleSave = async (productData, isEditing) => {
     try {
-      let categoryId = productData.category;
-      // If category is not an ObjectId, find it in categories
-      if (categories.length && typeof categoryId === 'string' && categoryId.length !== 24) {
-        const found = categories.find(c => c.name === categoryId);
-        if (found) categoryId = found._id;
-      }
-      const payload = { ...productData, category: categoryId, user: user._id , images: [{
-        url:productData.image,
-        alt: productData.name
-      }]};
+      const payload = {
+        ...productData,
+        user: user._id,
+        images: [
+          {
+            url: productData.image,
+            alt: productData.name,
+          },
+        ],
+      };
+
       if (isEditing) {
-        await axios.put(cleanUrl(`/api/products/${productData._id}`), payload, {
-          withCredentials: true
-        });
+        await axios.put(
+          cleanUrl(`/api/products/${productData._id}`),
+          payload,
+          { withCredentials: true }
+        );
       } else {
-        if (!user || !user._id) {
-          alert("No admin ID found");
-          return;
-        }
-        await axios.post(cleanUrl('/api/products'), payload, { withCredentials: true });
+        await axios.post(cleanUrl("/api/products"), payload, {
+          withCredentials: true,
+        });
       }
+
       setShowModal(false);
       fetchProducts();
     } catch (err) {
       alert(err.message);
-    }
-  };
-
-  const handleAddCategory = async (name) => {
-    try {
-      await axios.post(cleanUrl('/api/categories'), { name }, { withCredentials: true });
-      // Refresh categories after adding
-      const { data } = await axios.get(cleanUrl('/api/categories'), { withCredentials: true });
-      setCategories(data);
-      alert('Category added successfully');
-    } catch (err) {
-      alert('Error adding category: ' + err.message);
     }
   };
 
@@ -552,88 +559,96 @@ const ProductsView = ({ user }) => {
   return (
     <div className="page-view">
       <div className="header-bar">
-        <h2 className="page-title">Products Management</h2>
-        <button className="button button-primary" onClick={handleCreateNew}>
-          <FiPlus style={{ marginRight: '8px' }} /> Add Product
+        <h2 className="page-title">Products</h2>
+
+        <button
+          className="button button-primary"
+          onClick={() => {
+            setProductToEdit(null);
+            setShowModal(true);
+          }}
+        >
+          <FiPlus /> Add Product
         </button>
-        {/* Add Category UI */}
-        <form style={{ display: 'inline-block', marginLeft: '16px' }}
-          onSubmit={e => {
-            e.preventDefault();
-            const name = e.target.categoryName.value.trim();
-            if (name) handleAddCategory(name);
-            e.target.reset();
-          }}>
-          <input name="categoryName" type="text" placeholder="New Category" className="form-input" style={{ width: '160px', marginRight: '8px' }} />
-          <button type="submit" className="button button-secondary">Add Category</button>
-        </form>
       </div>
 
       <div className="table-container">
-        {products.length === 0 ? (
-          <p>No products found.</p>
-        ) : (
-          <table className="table">
-            <thead>
-              <tr>
-                <th>Image</th>
-                <th>Product ID</th>
-                <th>Name</th>
-                <th>Price</th>
-                <th>Stock</th>
-                <th>Category</th>
-                <th>Actions</th>
+        <table className="table">
+          <thead>
+            <tr>
+              <th>Image</th>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Price</th>
+              <th>Stock</th>
+              <th>Category</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {products.map((p) => (
+              
+              <tr key={p._id}>
+                <td>
+                  <img
+                    src={cleanUrl(p.images?.[0]?.url || p.image)}
+                    alt={p.name}
+                    className="table-image"
+                    onError={(e) =>
+                      (e.target.src = "https://placehold.co/50x50")
+                    }
+                  />
+                  {console.log("Product:", p)}
+                  {console.log("Image URL:", p.images?.[0]?.url, p.image)}
+                  
+                </td>
+
+                <td>{p._id}</td>
+                <td>{p.name}</td>
+                <td>₹{p.price}</td>
+
+                <td>
+                  {p.stock <= 5 ? (
+                    <span className="status-badge status-not-paid">
+                      {p.stock} (Low)
+                    </span>
+                  ) : (
+                    p.stock
+                  )}
+                </td>
+
+                <td>{p.category?.name || p.category}</td>
+
+                <td>
+                  <button
+                    className="action-button-edit"
+                    onClick={() => {
+                      setProductToEdit(p);
+                      setShowModal(true);
+                    }}
+                  >
+                    <FiEdit />
+                  </button>
+                  <button
+                    className="action-button-delete"
+                    onClick={async () => {
+                      if (window.confirm("Delete this product?")) {
+                        await axios.delete(
+                          cleanUrl(`/api/products/${p._id}`),
+                          { withCredentials: true }
+                        );
+                        fetchProducts();
+                      }
+                    }}
+                  >
+                    <FiTrash2 />
+                  </button>
+                </td>
               </tr>
-            </thead>
-
-            <tbody>
-              {products.map(product => (
-                <tr key={product._id}>
-                  <td>
-                    <img
-                      src={product.images?.[0]?.url}
-                      alt={product.images?.[0]?.alt}
-                      className="table-image"
-                      onError={(e) => {
-                        e.target.onerror = null;
-                        e.target.src = "https://placehold.co/50x50";
-                      }}
-                    />
-                  </td>
-
-                  <td>{product._id}</td>
-                  <td>{product.name}</td>
-                  <td>${product.price.toFixed(2)}</td>
-
-                  <td>
-                    {product.countInStock <= 5 ? (
-                      <span className="status-badge status-not-paid">
-                        {product.countInStock} (Low)
-                      </span>
-                    ) : (
-                      product.countInStock
-                    )}
-                  </td>
-
-                  <td>{product.category}</td>
-
-                  <td>
-                    <div className="action-button-group">
-                      <button className="action-button-edit" onClick={() => handleEdit(product)}>
-                        <FiEdit />
-                      </button>
-                      <button className="action-button-delete" onClick={() => handleDelete(product._id)}>
-                        <FiTrash2 />
-                      </button>
-                    </div>
-                  </td>
-
-                </tr>
-              ))}
-            </tbody>
-
-          </table>
-        )}
+            ))}
+          </tbody>
+        </table>
       </div>
 
       {showModal && (
@@ -650,98 +665,85 @@ const ProductsView = ({ user }) => {
 
 /* ================================================================
    USERS VIEW
-=================================================================== */
+================================================================ */
 const UsersView = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
   useEffect(() => {
-
-    const fetchUsers = async () => {
+    const loadUsers = async () => {
       try {
-        setLoading(true);
-        const { data } = await axios.get(cleanUrl('/api/users'), {
+        const { data } = await axios.get(cleanUrl("/api/users"), {
           withCredentials: true,
         });
         setUsers(data);
-      } catch (err) {
-        setError(err.message);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchUsers();
-
+    loadUsers();
   }, []);
 
   if (loading) return <LoadingSpinner />;
-  if (error) return <ErrorDisplay message={error} />;
 
   return (
     <div className="page-view">
-      <h2 className="page-title">Users Management</h2>
+      <h2 className="page-title">Users</h2>
 
       <div className="table-container">
-        {users.length === 0 ? (
-          <p>No users found.</p>
-        ) : (
-          <table className="table">
-            <thead>
-              <tr>
-                <th>User ID</th>
-                <th>Email</th>
-                <th>Mobile</th>
-                <th>Username</th>
-                <th>Admin</th>
-                <th>Joined</th>
+        <table className="table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Email</th>
+              <th>Mobile</th>
+              <th>Name</th>
+              <th>Admin</th>
+              <th>Joined</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {users.map((u) => (
+              <tr key={u._id}>
+                <td>{u._id}</td>
+                <td>{u.email}</td>
+                <td>{u.mobilenum}</td>
+                <td>{u.username}</td>
+                <td>
+                  {u.isAdmin ? (
+                    <span className="status-badge status-paid">Yes</span>
+                  ) : (
+                    <span className="status-badge status-processing">No</span>
+                  )}
+                </td>
+                <td>{new Date(u.createdAt).toLocaleDateString()}</td>
               </tr>
-            </thead>
-
-            <tbody>
-              {users.map(user => (
-                <tr key={user._id}>
-                  <td>{user._id}</td>
-                  <td>{user.email}</td>
-                  <td>{user.mobilenum}</td>
-                  <td>{user.username || "N/A"}</td>
-                  <td>
-                    {user.isAdmin ? (
-                      <span className="status-badge status-paid">Yes</span>
-                    ) : (
-                      <span className="status-badge status-processing">No</span>
-                    )}
-                  </td>
-                  <td>{new Date(user.createdAt).toLocaleDateString()}</td>
-                </tr>
-              ))}
-            </tbody>
-
-          </table>
-        )}
+            ))}
+          </tbody>
+        </table>
       </div>
-
     </div>
   );
 };
 
 /* ================================================================
-   MAIN COMPONENT (AdminDashboard)
-=================================================================== */
+   MAIN ADMIN DASHBOARD
+================================================================ */
 const AdminDashboard = () => {
-  const [view, setView] = useState('dashboard');
+  const [view, setView] = useState("dashboard");
   const { user } = useContext(AuthContext);
 
   const renderView = () => {
     switch (view) {
-      case 'dashboard':
+      case "dashboard":
         return <DashboardView />;
-      case 'orders':
+      case "orders":
         return <OrdersView />;
-      case 'products':
+      case "products":
         return <ProductsView user={user} />;
-      case 'users':
+      case "users":
         return <UsersView />;
       default:
         return <DashboardView />;
