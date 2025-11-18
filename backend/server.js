@@ -15,6 +15,7 @@ import productRoutes from './Routes/Product.js';
 import orderRoutes from './Routes/Order.js';
 import userRoutes from './Routes/User.js';
 import categoryRoutes from './Routes/Category.js';
+import uploadRoutes from './Routes/Upload.js';
 
 // --- Database Connection ---
 import { DatabaseConnect } from './utils/db.js';
@@ -40,6 +41,8 @@ app.use('/api/products', productRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/categories', categoryRoutes);
+app.use('/api/upload', uploadRoutes);
+app.use('/uploads', express.static('uploads'));
 
 // --- Old Auth Routes ---
 // The frontend calls /login, /register, /auth

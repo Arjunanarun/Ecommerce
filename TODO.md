@@ -1,0 +1,4 @@
+- [x] Update POST /api/products route to properly set images array
+- [x] Update PUT /api/products/:id route to update product.images
+- [x] Remove invalid fields (brand, numReviews, user) from product creation
+- [ ] Test product creation with image upload to verify images stored in DB

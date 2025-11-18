@@ -112,12 +112,17 @@ const ProductModal = ({ product, onClose, onSave, categories }) => {
       _id: '',
       name: '',
       price: 0,
-      image: 'https://placehold.co/400x400/9ca3af/white?text=New',
+      image: '',
+      images: [],
       category: '',
       countInStock: 0,
       description: '',
     }
   );
+  const [imageFile, setImageFile] = useState(null);
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState('');
+  const [uploadSuccess, setUploadSuccess] = useState('');
 
   const isEditing = !!product;
 
@@ -127,21 +132,49 @@ const ProductModal = ({ product, onClose, onSave, categories }) => {
   };
   
 
+  // Handle file input change
+  const handleFileChange = (e) => {
+    setImageFile(e.target.files[0]);
+    setUploadError('');
+    setUploadSuccess('');
+  };
+
+  // Upload image to backend and set image URL
+  const handleUpload = async (e) => {
+    e.preventDefault();
+    if (!imageFile) return;
+    setUploading(true);
+    setUploadError('');
+    setUploadSuccess('');
+    const formDataUpload = new FormData();
+    formDataUpload.append('image', imageFile);
+    try {
+      const res = await axios.post(cleanUrl('/api/upload'), formDataUpload, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+        withCredentials: true,
+      });
+      setFormData((prev) => ({ ...prev, image: res.data.url }));
+      setUploadSuccess('Image uploaded successfully!');
+    } catch (err) {
+      setUploadError('Image upload failed: ' + (err.response?.data?.message || err.message));
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  // Handle form submit
   const handleSubmit = (e) => {
     e.preventDefault();
     onSave(formData, isEditing);
   };
 
   return (
-    <div className="modal-backdrop">
+    <div className="modal-overlay">
       <div className="modal">
         <div className="modal-header">
-          <h2>{isEditing ? 'Edit Product' : 'Add New Product'}</h2>
-          <button onClick={onClose} className="modal-close-button">
-            <FiX />
-          </button>
+          <h3>{isEditing ? 'Edit Product' : 'Add Product'}</h3>
+          <button className="modal-close" onClick={onClose}><FiX /></button>
         </div>
-
         <div className="modal-body">
           <form onSubmit={handleSubmit}>
             {/* Name */}
@@ -175,7 +208,7 @@ const ProductModal = ({ product, onClose, onSave, categories }) => {
                 <input
                   type="number"
                   name="countInStock"
-                  value={formData.countInStock}
+                  value={formData.stock}
                   onChange={handleInputChange}
                   className="form-input"
                   required
@@ -200,7 +233,7 @@ const ProductModal = ({ product, onClose, onSave, categories }) => {
               </select>
             </div>
 
-            {/* Image */}
+            {/* Image URL */}
             <div className="form-group">
               <label>Image URL</label>
               <input
@@ -210,6 +243,28 @@ const ProductModal = ({ product, onClose, onSave, categories }) => {
                 onChange={handleInputChange}
                 className="form-input"
               />
+            </div>
+
+            {/* Image Upload */}
+            <div className="form-group">
+              <label>Upload Image</label>
+              <input type="file" accept="image/*" onChange={handleFileChange} />
+              <button
+                type="button"
+                className="button button-secondary"
+                onClick={handleUpload}
+                disabled={uploading || !imageFile}
+                style={{ marginLeft: '8px' }}
+              >
+                {uploading ? 'Uploading...' : 'Upload'}
+              </button>
+              {uploadError && <div className="error-message">{uploadError}</div>}
+              {uploadSuccess && <div className="success-message">{uploadSuccess}</div>}
+              {formData.image && (
+                <div style={{ marginTop: '8px' }}>
+                  <img src={formData.image} alt="Preview" style={{ maxWidth: '100px', maxHeight: '100px' }} />
+                </div>
+              )}
             </div>
 
             {/* Description */}

@@ -41,23 +41,24 @@ router.get('/:id', async (req, res) => {
 // @access  Private/Admin
 router.post('/', protect, admin, async (req, res) => {
   try {
-    // Use data from frontend, not hardcoded sample
-    const { name, price, image, brand, category, countInStock, description } = req.body;
-    if (!name || !price || !image || !category || !countInStock || !description) {
+    // Accept either image (string) or images (array)
+    const { name, price, image, images, category, stock, description } = req.body;
+    if (!name || !price || (!image && !images) || !category || !stock || !description) {
       return res.status(400).json({ message: 'Missing required product fields' });
+    }
+    // Prepare images array
+    let productImages = [];
+    if (images && Array.isArray(images)) {
+      productImages = images.map(img => ({ url: img.url || img, alt: img.alt || '' }));
+    } else if (image) {
+      productImages = [{ url: image, alt: '' }];
     }
     const product = new Product({
       name,
       price,
-      user: req.user._id, // Set admin user as creator
-      images:[{
-        url:image,
-        alt:name
-      }], 
-      brand: brand || 'No Brand',
+      images: productImages,
       category,
-      stock: countInStock, // Map frontend countInStock to backend stock
-      numReviews: 0,
+      stock,
       description,
     });
     const createdProduct = await product.save();
@@ -72,7 +73,7 @@ router.post('/', protect, admin, async (req, res) => {
 // @route   PUT /api/products/:id
 // @access  Private/Admin
 router.put('/:id', protect, admin, async (req, res) => {
-  const { name, price, description, image, category, countInStock } = req.body;
+  const { name, price, description, image, images, category, stock } = req.body;
   try {
     const product = await Product.findById(req.params.id);
 
@@ -80,9 +81,14 @@ router.put('/:id', protect, admin, async (req, res) => {
       product.name = name || product.name;
       product.price = price || product.price;
       product.description = description || product.description;
-      product.image = image || product.image;
+      // Update images
+      if (images && Array.isArray(images)) {
+        product.images = images.map(img => ({ url: img.url || img, alt: img.alt || '' }));
+      } else if (image) {
+        product.images = [{ url: image, alt: '' }];
+      }
       product.category = category || product.category;
-      product.countInStock = countInStock || product.countInStock;
+      product.stock = stock || product.stock;
 
       const updatedProduct = await product.save();
       res.json(updatedProduct);
