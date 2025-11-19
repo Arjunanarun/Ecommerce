@@ -6,7 +6,7 @@ import ForgetPassword from '../Components/ForgetPassword';
 import { AuthProvider } from '../Context/AuthContext';
 import DashBoard from '../Admin/DashBoard';
 import UserDashboard from "../User/userDashboard";
-import ProductCard from "../Components/ProductCard";
+import Catelogue from "./Catelogue";
 
 export default function App() {
   return (
@@ -22,6 +22,7 @@ export default function App() {
         <Route path="/admin" element={<DashBoard/>}/>
         <Route path="/login" element={<Login />}/>
         <Route path="/user" element={<UserDashboard/>}/>
+        <Route path="/catalogues" element={<Catelogue />} />
       </Routes>
 
     </AuthProvider>
