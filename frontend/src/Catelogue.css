@@ -1,0 +1,61 @@
+.collection-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+  padding: 24px;
+  max-width: 1400px;
+  margin-top: 80px;
+
+}
+
+/* Responsive Grid */
+@media (max-width: 1200px) {
+  .collection-container {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+    padding: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .collection-container {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 16px;
+    padding: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .collection-container {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    padding: 12px;
+  }
+}
+
+/* Loading State */
+.collection-container:empty::before {
+  content: "Loading products...";
+  display: block;
+  text-align: center;
+  padding: 40px;
+  font-size: 18px;
+  color: #666;
+  grid-column: 1 / -1;
+}
+
+/* Optional: Add smooth appearance animation */
+.collection-container {
+  animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
