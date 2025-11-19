@@ -1,0 +1,114 @@
+/* Container for the Card */
+.product-card {
+    width: 300px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease;
+    cursor: pointer; /* Indicates it's interactive */
+}
+
+/* Image Wrapper */
+.image-container {
+    position: relative;
+    width: 100%;
+    /* Aspect ratio for the image area */
+    padding-bottom: 150%; 
+    overflow: hidden;
+}
+
+.product-image {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* Transition for a smoother image swap (though using React state here) */
+    transition: opacity 0.3s ease;
+}
+
+/* Badges (25% OFF, Best Sellers) */
+.badges {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    right: 10px;
+    display: flex;
+    justify-content: space-between;
+    z-index: 10; 
+}
+
+.badge {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: bold;
+    color: white;
+}
+
+.discount {
+    background-color: #4CAF50;
+}
+
+.bestseller {
+    background-color: #CC9933;
+}
+
+/* Hover Button (Click Me) */
+.hover-button {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    padding: 15px;
+    background-color: rgba(0, 0, 0, 0.75);
+    color: white;
+    border: none;
+    font-size: 16px;
+    font-weight: bold;
+    opacity: 0; /* Hidden by default */
+    transform: translateY(100%); /* Start off-screen */
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    z-index: 20;
+}
+
+/* STATE-BASED VISIBILITY (The key hover effect) */
+.hover-button.is-visible {
+    opacity: 1; /* Shows the button */
+    transform: translateY(0); /* Slides into view */
+}
+
+/* Product Details */
+.product-details {
+    padding: 10px 15px;
+    text-align: center;
+}
+
+.product-title {
+    font-size: 16px;
+    margin: 0 0 8px 0;
+    color: #333;
+}
+
+.price-info {
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.original-price {
+    text-decoration: line-through;
+    color: #999;
+    margin-right: 5px;
+}
+
+.current-price {
+    font-size: 16px;
+    font-weight: bold;
+    color: #000;
+    margin-right: 5px;
+}
+
+.save-percent {
+    color: #4CAF50;
+    font-weight: bold;
+}

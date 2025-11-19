@@ -6,15 +6,17 @@ import ForgetPassword from '../Components/ForgetPassword';
 import { AuthProvider } from '../Context/AuthContext';
 import DashBoard from '../Admin/DashBoard';
 import UserDashboard from "../User/userDashboard";
+import ProductCard from "../Components/ProductCard";
 
 export default function App() {
   return (
     <AuthProvider>
 
       {/* Show login always (if that's what you want) */}
-      
-
+      {/* <ProductCard/> */}
+    
       <Routes>
+        <Route path="/index.html" element={<Navigate to="/" replace />} />
         <Route path="/" element={<BasicRoutes />} />
         <Route path="/fp" element={<ForgetPassword />} />
         <Route path="/admin" element={<DashBoard/>}/>
