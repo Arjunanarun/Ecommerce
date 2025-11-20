@@ -280,6 +280,7 @@ const Catelogue = () => {
                                     name={item.name} 
                                     price={item.price} 
                                     desc={item.description} 
+                                    discountprice={item.discountPrice}
                                 />
                             ))
                         ) : (

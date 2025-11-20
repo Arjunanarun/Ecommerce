@@ -2,9 +2,9 @@ import React from 'react'
 import './ProductCard.css'
 import { Link } from 'react-router-dom';
 
-const ProductCard = ({ id, image, name, price, desc,  isBestSeller = true }) => {
+const ProductCard = ({ id, image, name, price, desc, discountprice,  isBestSeller = true }) => {
     // Sample data - you can replace these with actual props
-    const oldPrice = 3000; // sample
+    const oldPrice = price; // sample
     const discount = 24; // sample
     
     return (
@@ -26,7 +26,7 @@ const ProductCard = ({ id, image, name, price, desc,  isBestSeller = true }) => 
             {/* Price row */}
             <div className="price-row">
                 <span className="old-price">Rs. {oldPrice}</span>
-                <span className="new-price">Rs. {price}</span>
+                <span className="new-price">Rs. {discountprice}</span>
                 <span className="save">Save {discount}%</span>
             </div>
         </Link>
