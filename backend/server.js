@@ -37,8 +37,8 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(
   cors({
-    origin: 'http://localhost:5173',
-    "https://mangaiwears.onrender.com",
+    origin: ['http://localhost:5173',
+    "https://mangaiwears.onrender.com"],
     credentials: true,
   })
 );
