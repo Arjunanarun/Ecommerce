@@ -105,18 +105,29 @@ const ErrorDisplay = ({ message }) => (
    PRODUCT MODAL
 ================================================================ */
 const ProductModal = ({ product, onClose, onSave, categories }) => {
-  const [formData, setFormData] = useState(
-    product || {
-      _id: "",
-      name: "",
-      price: 0,
-      image: "",
-      images: [],
-      category: "",
-      stock: 0,
-      description: "",
+  // ensure discountPrice exists for both create & edit
+  const initialForm = product
+    ? { ...product, discountPrice: product.discountPrice ?? 0 }
+    : {
+        _id: "",
+        name: "",
+        price: 0,
+        discountPrice: 0, // NEW
+        image: "",
+        images: [],
+        category: "",
+        stock: 0,
+        description: "",
+      };
+
+  const [formData, setFormData] = useState(initialForm);
+
+  // Ensure if product prop changes while modal is open (rare), form updates.
+  useEffect(() => {
+    if (product) {
+      setFormData({ ...product, discountPrice: product.discountPrice ?? 0 });
     }
-  );
+  }, [product]);
 
   const [imageFile, setImageFile] = useState(null);
   const [uploading, setUploading] = useState(false);
@@ -126,7 +137,10 @@ const ProductModal = ({ product, onClose, onSave, categories }) => {
   const isEditing = !!product;
 
   const handleInputChange = (e) => {
-    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    const { name, value, type } = e.target;
+    // convert numeric inputs to numbers
+    const val = type === "number" ? (value === "" ? "" : Number(value)) : value;
+    setFormData((prev) => ({ ...prev, [name]: val }));
   };
 
   const handleFileChange = (e) => {
@@ -165,7 +179,13 @@ const ProductModal = ({ product, onClose, onSave, categories }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSave(formData, isEditing);
+    // ensure discountPrice is number (already handled in input, but double-check)
+    const payload = {
+      ...formData,
+      discountPrice:
+        formData.discountPrice === "" ? 0 : Number(formData.discountPrice),
+    };
+    onSave(payload, isEditing);
   };
 
   return (
@@ -192,7 +212,7 @@ const ProductModal = ({ product, onClose, onSave, categories }) => {
               />
             </div>
 
-            {/* Price + Stock */}
+            {/* Price + Discount + Stock */}
             <div className="form-group-row">
               <div className="form-group">
                 <label>Price</label>
@@ -204,6 +224,19 @@ const ProductModal = ({ product, onClose, onSave, categories }) => {
                   required
                 />
               </div>
+
+              {/* NEW: Discount Price (right under Price as requested) */}
+              <div className="form-group">
+                <label>Discount Price</label>
+                <input
+                  type="number"
+                  name="discountPrice"
+                  value={formData.discountPrice}
+                  onChange={handleInputChange}
+                  className="form-control"
+                />
+              </div>
+
               <div className="form-group">
                 <label>Stock</label>
                 <input
@@ -259,9 +292,7 @@ const ProductModal = ({ product, onClose, onSave, categories }) => {
                 {uploading ? "Uploading..." : "Upload"}
               </button>
 
-              {uploadError && (
-                <div className="error-message">{uploadError}</div>
-              )}
+              {uploadError && <div className="error-message">{uploadError}</div>}
               {uploadSuccess && (
                 <div className="success-message">{uploadSuccess}</div>
               )}
@@ -273,7 +304,6 @@ const ProductModal = ({ product, onClose, onSave, categories }) => {
                   style={{ width: "100px", marginTop: "10px" }}
                 />
               )}
-
             </div>
 
             {/* Description */}
@@ -561,15 +591,15 @@ const ProductsView = ({ user }) => {
       <div className="header-bar">
         <h2 className="page-title">Products</h2>
 
-        <button
-          className="button button-primary"
-          onClick={() => {
-            setProductToEdit(null);
-            setShowModal(true);
-          }}
-        >
-          <FiPlus /> Add Product
-        </button>
+            <button
+        className="button button-primary"
+        onClick={() => {
+          setProductToEdit(null);
+          setShowModal(true);
+        }}
+      >
+        <FiPlus /> Add Product
+      </button>
       </div>
 
       <div className="table-container">
@@ -580,6 +610,7 @@ const ProductsView = ({ user }) => {
               <th>ID</th>
               <th>Name</th>
               <th>Price</th>
+              <th>Discount Price</th> {/* NEW */}
               <th>Stock</th>
               <th>Category</th>
               <th>Actions</th>
@@ -599,14 +630,21 @@ const ProductsView = ({ user }) => {
                       (e.target.src = "https://placehold.co/50x50")
                     }
                   />
-                  {console.log("Product:", p)}
-                  {console.log("Image URL:", p.images?.[0]?.url, p.image)}
-                  
                 </td>
 
                 <td>{p._id}</td>
                 <td>{p.name}</td>
                 <td>₹{p.price}</td>
+
+                <td>
+                  {p.discountPrice > 0 ? (
+                    <span className="status-badge status-paid">
+                      ₹{p.discountPrice}
+                    </span>
+                  ) : (
+                    "—"
+                  )}
+                </td>
 
                 <td>
                   {p.stock <= 5 ? (
@@ -654,7 +692,10 @@ const ProductsView = ({ user }) => {
       {showModal && (
         <ProductModal
           product={productToEdit}
-          onClose={() => setShowModal(false)}
+          onClose={() => {
+            setShowModal(false);
+            setProductToEdit(null);
+          }}
           onSave={handleSave}
           categories={categories}
         />

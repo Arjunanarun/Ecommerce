@@ -7,6 +7,7 @@ import { AuthProvider } from '../Context/AuthContext';
 import DashBoard from '../Admin/DashBoard';
 import UserDashboard from "../User/userDashboard";
 import Catelogue from "./Catelogue";
+import ProductCard from "../Components/ProductCard";
 
 export default function App() {
   return (
