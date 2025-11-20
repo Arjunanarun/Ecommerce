@@ -562,7 +562,10 @@ const ProductsView = ({ user }) => {
             alt: productData.name,
           },
         ],
+        discountPrice: productData.discountPrice
       };
+
+      console.log("payload",payload);
 
       if (isEditing) {
         await axios.put(
@@ -610,7 +613,7 @@ const ProductsView = ({ user }) => {
               <th>ID</th>
               <th>Name</th>
               <th>Price</th>
-              <th>Discount Price</th> {/* NEW */}
+              <th>Discount Price</th> 
               <th>Stock</th>
               <th>Category</th>
               <th>Actions</th>
