@@ -16,10 +16,10 @@ import {
   FiAlertCircle,
 } from "react-icons/fi";
 
-// CSS
+// CSS (Assuming ./DashBoard.css exists)
 import "./DashBoard.css";
 
-// Auth
+// Auth (Assuming AuthContext exists)
 import { AuthContext } from "../Context/AuthContext";
 
 const BaseUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
@@ -33,807 +33,833 @@ const cleanUrl = (path) => {
 
 
 /* ================================================================
-   SIDEBAR
+    SIDEBAR (Unchanged)
 ================================================================ */
 const Sidebar = ({ view, setView, user }) => {
-  const navItems = [
-    { name: "Dashboard", icon: <FiLayout />, view: "dashboard" },
-    { name: "Orders", icon: <FiShoppingCart />, view: "orders" },
-    { name: "Products", icon: <FiPackage />, view: "products" },
-    { name: "Users", icon: <FiUsers />, view: "users" },
-  ];
+    // ... (Sidebar code remains the same)
+    const navItems = [
+        { name: "Dashboard", icon: <FiLayout />, view: "dashboard" },
+        { name: "Orders", icon: <FiShoppingCart />, view: "orders" },
+        { name: "Products", icon: <FiPackage />, view: "products" },
+        { name: "Users", icon: <FiUsers />, view: "users" },
+    ];
 
-  return (
-    <div className="sidebar">
-      <div className="sidebar-header">
-        <span className="sidebar-title">Admin Panel</span>
-      </div>
+    return (
+        <div className="sidebar">
+            <div className="sidebar-header">
+                <span className="sidebar-title">Admin Panel</span>
+            </div>
 
-      <nav>
-        <ul>
-          {navItems.map((item) => (
-            <li key={item.name}>
-              <button
-                onClick={() => setView(item.view)}
-                className={`sidebar-nav-item ${view === item.view ? "active" : ""
-                  }`}
-              >
-                <span className="sidebar-nav-icon">{item.icon}</span>
-                <span className="sidebar-nav-text">{item.name}</span>
-              </button>
-            </li>
-          ))}
-        </ul>
-      </nav>
+            <nav>
+                <ul>
+                    {navItems.map((item) => (
+                        <li key={item.name}>
+                            <button
+                                onClick={() => setView(item.view)}
+                                className={`sidebar-nav-item ${view === item.view ? "active" : ""
+                                    }`}
+                            >
+                                <span className="sidebar-nav-icon">{item.icon}</span>
+                                <span className="sidebar-nav-text">{item.name}</span>
+                            </button>
+                        </li>
+                    ))}
+                </ul>
+            </nav>
 
-      <div className="sidebar-footer">
-        <p className="sidebar-user-name">{user?.username || "Admin"}</p>
-        <p className="sidebar-user-email">{user?.email}</p>
-      </div>
-    </div>
-  );
+            <div className="sidebar-footer">
+                <p className="sidebar-user-name">{user?.username || "Admin"}</p>
+                <p className="sidebar-user-email">{user?.email}</p>
+            </div>
+        </div>
+    );
 };
 
 /* ================================================================
-   REUSABLE COMPONENTS
+    REUSABLE COMPONENTS (Unchanged)
 ================================================================ */
 const StatCard = ({ title, value, icon, iconClass = "" }) => (
-  <div className="stat-card">
-    <div className="stat-card-info">
-      <p className="stat-card-title">{title}</p>
-      <p className="stat-card-value">{value}</p>
+    <div className="stat-card">
+        <div className="stat-card-info">
+            <p className="stat-card-title">{title}</p>
+            <p className="stat-card-value">{value}</p>
+        </div>
+        <div className={`stat-card-icon ${iconClass}`}>{icon}</div>
     </div>
-    <div className={`stat-card-icon ${iconClass}`}>{icon}</div>
-  </div>
 );
 
 const LoadingSpinner = () => (
-  <div className="loading-container">
-    <FiLoader className="loading-spinner" />
-    <p>Loading data...</p>
-  </div>
+    <div className="loading-container">
+        <FiLoader className="loading-spinner" />
+        <p>Loading data...</p>
+    </div>
 );
 
 const ErrorDisplay = ({ message }) => (
-  <div className="error-container">
-    <FiAlertCircle className="error-icon" />
-    <p>Error: {message}</p>
-  </div>
+    <div className="error-container">
+        <FiAlertCircle className="error-icon" />
+        <p>Error: {message}</p>
+    </div>
 );
 
 /* ================================================================
-   PRODUCT MODAL
+    PRODUCT MODAL (Updated to handle 'images' array instead of single 'image' string)
 ================================================================ */
 const ProductModal = ({ product, onClose, onSave, categories }) => {
-  // ensure discountPrice exists for both create & edit
-  const initialForm = product
-    ? { ...product, discountPrice: product.discountPrice ?? 0 ,sizes :product.sizes ?? []}
-    : {
-      _id: "",
-      name: "",
-      price: 0,
-      discountPrice: 0, // NEW
-      image: "",
-      images: [],
-      category: "",
-      stock: 0,
-      description: "",
-      sizes: []
+    // Initialize sizes and discountPrice correctly
+    const initialForm = product
+        ? { ...product, discountPrice: product.discountPrice ?? 0, sizes: product.sizes ?? [], images: product.images ?? [] }
+        : {
+            _id: "",
+            name: "",
+            price: 0,
+            discountPrice: 0,
+            image: "", // Keep image field for initial upload, but we'll prioritize 'images'
+            images: [], // Managed as the source of truth
+            category: "",
+            stock: 0,
+            description: "",
+            sizes: []
+        };
+
+    const [formData, setFormData] = useState(initialForm);
+
+    // Sync on product change
+    useEffect(() => {
+        if (product) {
+            setFormData({ 
+                ...product, 
+                discountPrice: product.discountPrice ?? 0, 
+                sizes: product.sizes ?? [],
+                images: product.images ?? [] // Ensure existing images are loaded
+            });
+        }
+    }, [product]);
+
+    const [imageFile, setImageFile] = useState(null);
+    const [uploading, setUploading] = useState(false);
+    const [uploadError, setUploadError] = useState("");
+    const [uploadSuccess, setUploadSuccess] = useState("");
+
+    const isEditing = !!product;
+
+    const handleInputChange = (e) => {
+        const { name, value, type } = e.target;
+        const val = type === "number" ? (value === "" ? "" : Number(value)) : value;
+        setFormData((prev) => ({ ...prev, [name]: val }));
     };
 
-  const [formData, setFormData] = useState(initialForm);
-
-  // Ensure if product prop changes while modal is open (rare), form updates.
-  useEffect(() => {
-    if (product) {
-      setFormData({ ...product, discountPrice: product.discountPrice ?? 0, sizes: product.sizes ?? [] });
-    }
-  }, [product]);
-
-  const [imageFile, setImageFile] = useState(null);
-  const [uploading, setUploading] = useState(false);
-  const [uploadError, setUploadError] = useState("");
-  const [uploadSuccess, setUploadSuccess] = useState("");
-
-  const isEditing = !!product;
-
-  const handleInputChange = (e) => {
-    const { name, value, type } = e.target;
-    // convert numeric inputs to numbers
-    const val = type === "number" ? (value === "" ? "" : Number(value)) : value;
-    setFormData((prev) => ({ ...prev, [name]: val }));
-  };
-
-  const handleFileChange = (e) => {
-    setImageFile(e.target.files[0]);
-    setUploadError("");
-    setUploadSuccess("");
-  };
-
-  const handleUpload = async (e) => {
-    e.preventDefault();
-    if (!imageFile) return;
-
-    setUploading(true);
-    setUploadError("");
-    setUploadSuccess("");
-
-    const fd = new FormData();
-    fd.append("image", imageFile);
-
-    try {
-      const res = await axios.post(cleanUrl("/api/upload"), fd, {
-        headers: { "Content-Type": "multipart/form-data" },
-        withCredentials: true,
-      });
-
-      setFormData((prev) => ({ ...prev, image: res.data.url }));
-      setUploadSuccess("Image uploaded successfully!");
-    } catch (err) {
-      setUploadError(
-        "Image upload failed: " + (err.response?.data?.message || err.message)
-      );
-    } finally {
-      setUploading(false);
-    }
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // ensure discountPrice is number (already handled in input, but double-check)
-    const payload = {
-      ...formData,
-      discountPrice:
-        formData.discountPrice === "" ? 0 : Number(formData.discountPrice),
+    const handleFileChange = (e) => {
+        setImageFile(e.target.files[0]);
+        setUploadError("");
+        setUploadSuccess("");
     };
-    onSave(payload, isEditing);
-  };
 
-  //size adding logic
-  const allSizes = ["S", "M", "L", "XL", "XXL"];
+    // 🛑 CRITICAL FRONTEND CHANGE: Push new URL object to the 'images' array
+    const handleUpload = async (e) => {
+        e.preventDefault();
+        if (!imageFile) return;
 
-  const toggleSize = (size) => {
-    setFormData(prev => {
-            const currentSizes = prev.sizes || []; // Handle case where it might be null/undefined initially
+        setUploading(true);
+        setUploadError("");
+        setUploadSuccess("");
+
+        const fd = new FormData();
+        fd.append("image", imageFile);
+
+        try {
+            const res = await axios.post(cleanUrl("/api/upload"), fd, {
+                headers: { "Content-Type": "multipart/form-data" },
+                withCredentials: true,
+            });
+
+            // Push new image object into the images array
+            setFormData((prev) => ({ 
+                ...prev, 
+                images: [...(prev.images || []), { url: res.data.url, alt: `Image for ${prev.name}` }]
+            }));
+            
+            setUploadSuccess("Image uploaded successfully!");
+            setImageFile(null); // Clear file input
+        } catch (err) {
+            setUploadError(
+                "Image upload failed: " + (err.response?.data?.message || err.message)
+            );
+        } finally {
+            setUploading(false);
+        }
+    };
+
+    // 🛑 CRITICAL FRONTEND CHANGE: Modify handleSubmit to exclude the single 'image' string field
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        
+        // Exclude the redundant 'image' string field from the final payload
+        const { image, ...restOfFormData } = formData;
+
+        const payload = {
+            ...restOfFormData, // Contains the clean 'images' array, sizes, discountPrice
+            discountPrice:
+                formData.discountPrice === "" ? 0 : Number(formData.discountPrice),
+        };
+        onSave(payload, isEditing);
+    };
+
+    const allSizes = ["S", "M", "L", "XL", "XXL"];
+
+    const toggleSize = (size) => {
+        setFormData(prev => {
+            const currentSizes = prev.sizes || [];
             const newSizes = currentSizes.includes(size)
                 ? currentSizes.filter(s => s !== size)
                 : [...currentSizes, size];
-            
+
             return {
                 ...prev,
                 sizes: newSizes
             };
         });
     };
+    
+    const handleRemoveImage = (urlToRemove) => {
+        setFormData((prev) => ({
+            ...prev,
+            images: prev.images.filter(img => img.url !== urlToRemove)
+        }));
+    };
 
-  return (
-    <div className="modal-overlay">
-      <div className="modal">
-        <div className="modal-header">
-          <h3>{isEditing ? "Edit Product" : "Add Product"}</h3>
-          <button className="modal-close" onClick={onClose}>
-            <FiX />
-          </button>
+    return (
+        <div className="modal-overlay">
+            <div className="modal">
+                <div className="modal-header">
+                    <h3>{isEditing ? "Edit Product" : "Add Product"}</h3>
+                    <button className="modal-close" onClick={onClose}>
+                        <FiX />
+                    </button>
+                </div>
+
+                <div className="modal-body">
+                    <form onSubmit={handleSubmit}>
+                        {/* Name */}
+                        <div className="form-group">
+                            <label>Product Name</label>
+                            <input
+                                type="text"
+                                name="name"
+                                value={formData.name}
+                                onChange={handleInputChange}
+                                required
+                            />
+                        </div>
+
+                        {/* Price + Discount + Stock */}
+                        <div className="form-group-row">
+                            <div className="form-group">
+                                <label>Price</label>
+                                <input
+                                    type="number"
+                                    name="price"
+                                    value={formData.price}
+                                    onChange={handleInputChange}
+                                    required
+                                />
+                            </div>
+
+                            <div className="form-group">
+                                <label>Discount</label>
+                                <input
+                                    type="number"
+                                    name="discountPrice"
+                                    value={formData.discountPrice}
+                                    onChange={handleInputChange}
+                                    className="form-control"
+                                />
+                            </div>
+
+                            <div className="form-group">
+                                <label>Stock</label>
+                                <input
+                                    type="number"
+                                    name="stock"
+                                    value={formData.stock}
+                                    onChange={handleInputChange}
+                                    required
+                                />
+                            </div>
+                        </div>
+
+                        {/* Category */}
+                        <div className="form-group">
+                            <label>Category</label>
+                            <select
+                                name="category"
+                                value={formData.category}
+                                onChange={handleInputChange}
+                                required
+                            >
+                                <option value="">Select Category</option>
+                                {categories.map((cat) => (
+                                    <option key={cat._id} value={cat._id}>
+                                        {cat.name}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+
+                        {/* Size Field */}
+                        <div className="form-group">
+                            <label>Sizes</label>
+                            {allSizes.map(size => (
+                                <label key={size}>
+                                    <input
+                                        type="checkbox"
+                                        checked={formData.sizes.includes(size)}
+                                        onChange={() => toggleSize(size)}
+                                    />
+                                    {size}
+                                </label>
+                            ))}
+                        </div>
+                        
+                        {/* Image Upload and Preview */}
+                        <div className="form-group">
+                            <label>Upload Image</label>
+                            <input type="file" accept="image/*" onChange={handleFileChange} />
+                            <button
+                                type="button"
+                                onClick={handleUpload}
+                                disabled={uploading || !imageFile}
+                                className="button button-secondary"
+                                style={{ marginLeft: "10px" }}
+                            >
+                                {uploading ? "Uploading..." : "Upload"}
+                            </button>
+
+                            {uploadError && <div className="error-message">{uploadError}</div>}
+                            {uploadSuccess && (
+                                <div className="success-message">{uploadSuccess}</div>
+                            )}
+
+                            {/* Display Multiple Image Previews */}
+                            <div className="image-previews" style={{ display: 'flex', flexWrap: 'wrap', marginTop: '10px', gap: '10px' }}>
+                                {formData.images?.map((img, index) => (
+                                    <div key={index} style={{ position: 'relative', width: '100px', height: '100px', border: '1px solid #ddd' }}>
+                                        <img
+                                            src={cleanUrl(img.url)}
+                                            alt={img.alt || 'Product Image'}
+                                            style={{ width: "100%", height: "100%", objectFit: 'cover' }}
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => handleRemoveImage(img.url)}
+                                            style={{ position: 'absolute', top: '2px', right: '2px', background: 'red', color: 'white', border: 'none', borderRadius: '50%', cursor: 'pointer', padding: '0 4px', fontSize: '10px' }}
+                                        >
+                                            <FiX />
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+
+                        {/* Description */}
+                        <div className="form-group">
+                            <label>Description</label>
+                            <textarea
+                                name="description"
+                                value={formData.description}
+                                onChange={handleInputChange}
+                                rows="4"
+                            ></textarea>
+                        </div>
+
+                        <div className="form-actions">
+                            <button
+                                type="button"
+                                className="button button-secondary"
+                                onClick={onClose}
+                            >
+                                Cancel
+                            </button>
+                            <button type="submit" className="button button-primary">
+                                Save Product
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
-
-        <div className="modal-body">
-          <form onSubmit={handleSubmit}>
-            {/* Name */}
-            <div className="form-group">
-              <label>Product Name</label>
-              <input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleInputChange}
-                required
-              />
-            </div>
-
-            {/* Price + Discount + Stock */}
-            <div className="form-group-row">
-              <div className="form-group">
-                <label>Price</label>
-                <input
-                  type="number"
-                  name="price"
-                  value={formData.price}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-
-              {/* NEW: Discount Price (right under Price as requested) */}
-              <div className="form-group">
-                <label>Discount</label>
-                <input
-                  type="number"
-                  name="discountPrice"
-                  value={formData.discountPrice}
-                  onChange={handleInputChange}
-                  className="form-control"
-                />
-              </div>
-
-              <div className="form-group">
-                <label>Stock</label>
-                <input
-                  type="number"
-                  name="stock"
-                  value={formData.stock}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-            </div>
-
-            {/* Category */}
-            <div className="form-group">
-              <label>Category</label>
-              <select
-                name="category"
-                value={formData.category}
-                onChange={handleInputChange}
-                required
-              >
-                <option value="">Select Category</option>
-                {categories.map((cat) => (
-                  <option key={cat._id} value={cat._id}>
-                    {cat.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Size Field*/}
-            <div className="form-group">
-              <label>Sizes</label>
-              {allSizes.map(size => (
-                <label key={size}>
-                  <input
-                    type="checkbox"
-                    checked={formData.sizes.includes(size)}
-                    onChange={() => toggleSize(size)}
-                  />
-                  {size}
-                </label>
-              ))}
-
-            </div>
-
-            {/* Image URL */}
-            <div className="form-group">
-              <label>Image URL</label>
-              <input
-                type="text"
-                name="image"
-                value={formData.image}
-                onChange={handleInputChange}
-              />
-            </div>
-
-            {/* Upload Image */}
-            <div className="form-group">
-              <label>Upload Image</label>
-              <input type="file" accept="image/*" onChange={handleFileChange} />
-              <button
-                type="button"
-                onClick={handleUpload}
-                disabled={uploading || !imageFile}
-                className="button button-secondary"
-                style={{ marginLeft: "10px" }}
-              >
-                {uploading ? "Uploading..." : "Upload"}
-              </button>
-
-              {uploadError && <div className="error-message">{uploadError}</div>}
-              {uploadSuccess && (
-                <div className="success-message">{uploadSuccess}</div>
-              )}
-
-              {formData.image?.trim() && (
-                <img
-                  src={cleanUrl(formData.image)}
-                  alt="Preview"
-                  style={{ width: "100px", marginTop: "10px" }}
-                />
-              )}
-            </div>
-
-            {/* Description */}
-            <div className="form-group">
-              <label>Description</label>
-              <textarea
-                name="description"
-                value={formData.description}
-                onChange={handleInputChange}
-                rows="4"
-              ></textarea>
-            </div>
-
-            <div className="form-actions">
-              <button
-                type="button"
-                className="button button-secondary"
-                onClick={onClose}
-              >
-                Cancel
-              </button>
-              <button type="submit" className="button button-primary">
-                Save Product
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-  );
+    );
 };
 
 /* ================================================================
-   DASHBOARD VIEW
+    DASHBOARD VIEW (Unchanged)
 ================================================================ */
 const DashboardView = () => {
-  const [stats, setStats] = useState({
-    totalRevenue: 0,
-    totalOrders: 0,
-    newCustomers: 0,
-    lowStock: 0,
-  });
+    // ... (DashboardView code remains the same)
+    const [stats, setStats] = useState({
+        totalRevenue: 0,
+        totalOrders: 0,
+        newCustomers: 0,
+        lowStock: 0,
+    });
 
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState("");
 
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        setLoading(true);
+    useEffect(() => {
+        const loadData = async () => {
+            try {
+                setLoading(true);
 
-        const [ordersRes, usersRes, productsRes] = await Promise.all([
-          axios.get(cleanUrl("/api/orders"), { withCredentials: true }),
-          axios.get(cleanUrl("/api/users"), { withCredentials: true }),
-          axios.get(cleanUrl("/api/products"), { withCredentials: true }),
-        ]);
+                const [ordersRes, usersRes, productsRes] = await Promise.all([
+                    axios.get(cleanUrl("/api/orders"), { withCredentials: true }),
+                    axios.get(cleanUrl("/api/users"), { withCredentials: true }),
+                    axios.get(cleanUrl("/api/products"), { withCredentials: true }),
+                ]);
 
-        const orders = ordersRes.data;
-        const users = usersRes.data;
-        const products = productsRes.data;
+                const orders = ordersRes.data;
+                const users = usersRes.data;
+                const products = productsRes.data;
 
-        const revenue = orders
-          .filter((o) => o.isPaid)
-          .reduce((sum, o) => sum + o.totalPrice, 0);
+                const revenue = orders
+                    .filter((o) => o.isPaid)
+                    .reduce((sum, o) => sum + o.totalPrice, 0);
 
-        const newCustomers = users.filter(
-          (u) =>
-            new Date(u.createdAt) >
-            new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
-        ).length;
+                const newCustomers = users.filter(
+                    (u) =>
+                        new Date(u.createdAt) >
+                        new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
+                ).length;
 
-        const lowStock = products.filter((p) => p.stock <= 5).length;
+                const lowStock = products.filter((p) => p.stock <= 5).length;
 
-        setStats({
-          totalRevenue: revenue.toFixed(2),
-          totalOrders: orders.length,
-          newCustomers,
-          lowStock,
-        });
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
+                setStats({
+                    totalRevenue: revenue.toFixed(2),
+                    totalOrders: orders.length,
+                    newCustomers,
+                    lowStock,
+                });
+            } catch (err) {
+                setError(err.message);
+            } finally {
+                setLoading(false);
+            }
+        };
 
-    loadData();
-  }, []);
+        loadData();
+    }, []);
 
-  if (loading) return <LoadingSpinner />;
-  if (error) return <ErrorDisplay message={error} />;
+    if (loading) return <LoadingSpinner />;
+    if (error) return <ErrorDisplay message={error} />;
 
-  return (
-    <div className="page-view">
-      <h2 className="page-title">Dashboard</h2>
+    return (
+        <div className="page-view">
+            <h2 className="page-title">Dashboard</h2>
 
-      <div className="stat-card-grid">
-        <StatCard
-          title="Total Revenue"
-          value={`₹${stats.totalRevenue}`}
-          icon={<FiDollarSign />}
-          iconClass="icon-green"
-        />
-        <StatCard
-          title="Total Orders"
-          value={stats.totalOrders}
-          icon={<FiShoppingCart />}
-          iconClass="icon-blue"
-        />
-        <StatCard
-          title="New Customers (30d)"
-          value={stats.newCustomers}
-          icon={<FiUsers />}
-          iconClass="icon-purple"
-        />
-        <StatCard
-          title="Low Stock Items"
-          value={stats.lowStock}
-          icon={<FiPackage />}
-          iconClass="icon-red"
-        />
-      </div>
-    </div>
-  );
+            <div className="stat-card-grid">
+                <StatCard
+                    title="Total Revenue"
+                    value={`₹${stats.totalRevenue}`}
+                    icon={<FiDollarSign />}
+                    iconClass="icon-green"
+                />
+                <StatCard
+                    title="Total Orders"
+                    value={stats.totalOrders}
+                    icon={<FiShoppingCart />}
+                    iconClass="icon-blue"
+                />
+                <StatCard
+                    title="New Customers (30d)"
+                    value={stats.newCustomers}
+                    icon={<FiUsers />}
+                    iconClass="icon-purple"
+                />
+                <StatCard
+                    title="Low Stock Items"
+                    value={stats.lowStock}
+                    icon={<FiPackage />}
+                    iconClass="icon-red"
+                />
+            </div>
+        </div>
+    );
 };
 
 /* ================================================================
-   ORDERS VIEW
+    ORDERS VIEW (Unchanged)
 ================================================================ */
 const OrdersView = () => {
-  const [orders, setOrders] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+    // ... (OrdersView code remains the same)
+    const [orders, setOrders] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState("");
 
-  useEffect(() => {
-    const loadOrders = async () => {
-      try {
-        setLoading(true);
-        const { data } = await axios.get(cleanUrl("/api/orders"), {
-          withCredentials: true,
-        });
-        setOrders(data);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
+    useEffect(() => {
+        const loadOrders = async () => {
+            try {
+                setLoading(true);
+                const { data } = await axios.get(cleanUrl("/api/orders"), {
+                    withCredentials: true,
+                });
+                setOrders(data);
+            } catch (err) {
+                setError(err.message);
+            } finally {
+                setLoading(false);
+            }
+        };
 
-    loadOrders();
-  }, []);
+        loadOrders();
+    }, []);
 
-  if (loading) return <LoadingSpinner />;
-  if (error) return <ErrorDisplay message={error} />;
+    if (loading) return <LoadingSpinner />;
+    if (error) return <ErrorDisplay message={error} />;
 
-  return (
-    <div className="page-view">
-      <h2 className="page-title">Orders</h2>
+    return (
+        <div className="page-view">
+            <h2 className="page-title">Orders</h2>
 
-      <div className="table-container">
-        <table className="table">
-          <thead>
-            <tr>
-              <th>Order ID</th>
-              <th>User</th>
-              <th>Date</th>
-              <th>Total</th>
-              <th>Paid</th>
-              <th>Delivered</th>
-            </tr>
-          </thead>
+            <div className="table-container">
+                <table className="table">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>User</th>
+                            <th>Date</th>
+                            <th>Total</th>
+                            <th>Paid</th>
+                            <th>Delivered</th>
+                        </tr>
+                    </thead>
 
-          <tbody>
-            {orders.map((o) => (
-              <tr key={o._id}>
-                <td>{o._id}</td>
-                <td>{o.user?.email}</td>
-                <td>{new Date(o.createdAt).toLocaleDateString()}</td>
-                <td>₹{o.totalPrice}</td>
-                <td>
-                  {o.isPaid ? (
-                    <span className="status-badge status-paid">Paid</span>
-                  ) : (
-                    <span className="status-badge status-not-paid">
-                      Not Paid
-                    </span>
-                  )}
-                </td>
-                <td>
-                  {o.isDelivered ? (
-                    <span className="status-badge status-delivered">
-                      Delivered
-                    </span>
-                  ) : (
-                    <span className="status-badge status-processing">
-                      Processing
-                    </span>
-                  )}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  );
+                    <tbody>
+                        {orders.map((o) => (
+                            <tr key={o._id}>
+                                <td>{o._id}</td>
+                                <td>{o.user?.email}</td>
+                                <td>{new Date(o.createdAt).toLocaleDateString()}</td>
+                                <td>₹{o.totalPrice}</td>
+                                <td>
+                                    {o.isPaid ? (
+                                        <span className="status-badge status-paid">Paid</span>
+                                    ) : (
+                                        <span className="status-badge status-not-paid">
+                                            Not Paid
+                                        </span>
+                                    )}
+                                </td>
+                                <td>
+                                    {o.isDelivered ? (
+                                        <span className="status-badge status-delivered">
+                                            Delivered
+                                        </span>
+                                    ) : (
+                                        <span className="status-badge status-processing">
+                                            Processing
+                                        </span>
+                                    )}
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    );
 };
 
 /* ================================================================
-   PRODUCTS VIEW
+    PRODUCTS VIEW (Updated handleSave logic)
 ================================================================ */
 const ProductsView = ({ user }) => {
-  const [products, setProducts] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [showModal, setShowModal] = useState(false);
-  const [productToEdit, setProductToEdit] = useState(null);
+    const [products, setProducts] = useState([]);
+    const [categories, setCategories] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState("");
+    const [showModal, setShowModal] = useState(false);
+    const [productToEdit, setProductToEdit] = useState(null);
 
-  const fetchProducts = async () => {
-    try {
-      setLoading(true);
-      const { data } = await axios.get(cleanUrl("/api/products"), {
-        withCredentials: true,
-      });
-      setProducts(data);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchCategories = async () => {
-    try {
-      const { data } = await axios.get(cleanUrl("/api/categories"), {
-        withCredentials: true,
-      });
-      setCategories(data);
-    } catch { }
-  };
-
-  useEffect(() => {
-    fetchProducts();
-    fetchCategories();
-  }, []);
-
-  const handleSave = async (productData, isEditing) => {
-    try {
-      const payload = {
-        ...productData,
-        user: user._id,
-        images: [
-          {
-            url: productData.image,
-            alt: productData.name,
-          },
-        ],
-        discountPrice: productData.discountPrice,
-      };
-
-      console.log("payload", payload);
-
-      if (isEditing) {
-        await axios.put(
-          cleanUrl(`/api/products/${productData._id}`),
-          payload,
-          { withCredentials: true }
-        );
-      } else {
-        await axios.post(cleanUrl("/api/products"), payload, {
-          withCredentials: true,
-        });
-      }
-
-      setShowModal(false);
-      fetchProducts();
-    } catch (err) {
-      alert(err.message);
-    }
-  };
-
-  if (loading) return <LoadingSpinner />;
-  if (error) return <ErrorDisplay message={error} />;
-
-  return (
-    <div className="page-view">
-      <div className="header-bar">
-        <h2 className="page-title">Products</h2>
-
-        <button
-          className="button button-primary"
-          onClick={() => {
-            setProductToEdit(null);
-            setShowModal(true);
-          }}
-        >
-          <FiPlus /> Add Product
-        </button>
-      </div>
-
-      <div className="table-container">
-        <table className="table">
-          <thead>
-            <tr>
-              <th>Image</th>
-              <th>ID</th>
-              <th>Name</th>
-              <th>Price</th>
-              <th>Discount Price</th>
-              <th>Stock</th>
-              <th>Category</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {products.map((p) => (
-
-              <tr key={p._id}>
-                <td>
-                  <img
-                    src={cleanUrl(p.images?.[0]?.url || p.image)}
-                    alt={p.name}
-                    className="table-image"
-                    onError={(e) =>
-                      (e.target.src = "https://placehold.co/50x50")
-                    }
-                  />
-                </td>
-
-                <td>{p._id}</td>
-                <td>{p.name}</td>
-                <td>₹{p.price}</td>
-
-                <td>
-                  {p.discountPrice > 0 ? (
-                    <span className="status-badge status-paid">
-                      ₹{p.discountPrice}
-                    </span>
-                  ) : (
-                    "—"
-                  )}
-                </td>
-
-                <td>
-                  {p.stock <= 5 ? (
-                    <span className="status-badge status-not-paid">
-                      {p.stock} (Low)
-                    </span>
-                  ) : (
-                    p.stock
-                  )}
-                </td>
-
-                <td>{p.category?.name || p.category}</td>
-
-                <td>
-                  <button
-                    className="action-button-edit"
-                    onClick={() => {
-                      setProductToEdit(p);
-                      setShowModal(true);
-                    }}
-                  >
-                    <FiEdit />
-                  </button>
-                  <button
-                    className="action-button-delete"
-                    onClick={async () => {
-                      if (window.confirm("Delete this product?")) {
-                        await axios.delete(
-                          cleanUrl(`/api/products/${p._id}`),
-                          { withCredentials: true }
-                        );
-                        fetchProducts();
-                      }
-                    }}
-                  >
-                    <FiTrash2 />
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      {showModal && (
-        <ProductModal
-          product={productToEdit}
-          onClose={() => {
-            setShowModal(false);
-            setProductToEdit(null);
-          }}
-          onSave={handleSave}
-          categories={categories}
-        />
-      )}
-    </div>
-  );
-};
-
-/* ================================================================
-   USERS VIEW
-================================================================ */
-const UsersView = () => {
-  const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const loadUsers = async () => {
-      try {
-        const { data } = await axios.get(cleanUrl("/api/users"), {
-          withCredentials: true,
-        });
-        setUsers(data);
-      } finally {
-        setLoading(false);
-      }
+    const fetchProducts = async () => {
+        try {
+            setLoading(true);
+            const { data } = await axios.get(cleanUrl("/api/products"), {
+                withCredentials: true,
+            });
+            setProducts(data);
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
     };
 
-    loadUsers();
-  }, []);
+    const fetchCategories = async () => {
+        try {
+            const { data } = await axios.get(cleanUrl("/api/categories"), {
+                withCredentials: true,
+            });
+            setCategories(data);
+        } catch { }
+    };
 
-  if (loading) return <LoadingSpinner />;
+    useEffect(() => {
+        fetchProducts();
+        fetchCategories();
+    }, []);
 
-  return (
-    <div className="page-view">
-      <h2 className="page-title">Users</h2>
+    // 🛑 CRITICAL FRONTEND CHANGE: Simplifies payload creation for server consistency
+    const handleSave = async (productData, isEditing) => {
+        try {
+            // The image field contains old data/is redundant now, remove it to ensure 
+            // the server only relies on the clean 'images' array.
+            const { image, ...restOfProductData } = productData; 
 
-      <div className="table-container">
-        <table className="table">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Email</th>
-              <th>Mobile</th>
-              <th>Name</th>
-              <th>Admin</th>
-              <th>Joined</th>
-            </tr>
-          </thead>
+            const payload = {
+                ...restOfProductData, // Now includes the clean 'images' array, sizes, discountPrice
+                user: user._id,
+                discountPrice: productData.discountPrice,
+            };
 
-          <tbody>
-            {users.map((u) => (
-              <tr key={u._id}>
-                <td>{u._id}</td>
-                <td>{u.email}</td>
-                <td>{u.mobilenum}</td>
-                <td>{u.username}</td>
-                <td>
-                  {u.isAdmin ? (
-                    <span className="status-badge status-paid">Yes</span>
-                  ) : (
-                    <span className="status-badge status-processing">No</span>
-                  )}
-                </td>
-                <td>{new Date(u.createdAt).toLocaleDateString()}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  );
+            // console.log("payload", payload); // Keep this for debugging
+
+            if (isEditing) {
+                await axios.put(
+                    cleanUrl(`/api/products/${productData._id}`),
+                    payload,
+                    { withCredentials: true }
+                );
+            } else {
+                await axios.post(cleanUrl("/api/products"), payload, {
+                    withCredentials: true,
+                });
+            }
+
+            setShowModal(false);
+            fetchProducts();
+        } catch (err) {
+            alert(err.message);
+        }
+    };
+
+    if (loading) return <LoadingSpinner />;
+    if (error) return <ErrorDisplay message={error} />;
+
+    return (
+        <div className="page-view">
+            <div className="header-bar">
+                <h2 className="page-title">Products</h2>
+
+                <button
+                    className="button button-primary"
+                    onClick={() => {
+                        setProductToEdit(null);
+                        setShowModal(true);
+                    }}
+                >
+                    <FiPlus /> Add Product
+                </button>
+            </div>
+
+            <div className="table-container">
+                <table className="table">
+                    <thead>
+                        <tr>
+                            <th>Image</th>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Price</th>
+                            <th>Discount Price</th>
+                            <th>Stock</th>
+                            <th>Category</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {products.map((p) => (
+
+                            <tr key={p._id}>
+                                <td>
+                                    {/* Display first image from the array, or use a placeholder */}
+                                    <img
+                                        src={cleanUrl(p.images?.[0]?.url || p.image || "https://placehold.co/50x50")}
+                                        alt={p.name}
+                                        className="table-image"
+                                        onError={(e) =>
+                                            (e.target.src = "https://placehold.co/50x50")
+                                        }
+                                    />
+                                </td>
+
+                                <td>{p._id}</td>
+                                <td>{p.name}</td>
+                                <td>₹{p.price}</td>
+
+                                <td>
+                                    {p.discountPrice > 0 ? (
+                                        <span className="status-badge status-paid">
+                                            ₹{p.discountPrice}
+                                        </span>
+                                    ) : (
+                                        "—"
+                                    )}
+                                </td>
+
+                                <td>
+                                    {p.stock <= 5 ? (
+                                        <span className="status-badge status-not-paid">
+                                            {p.stock} (Low)
+                                        </span>
+                                    ) : (
+                                        p.stock
+                                    )}
+                                </td>
+
+                                <td>{p.category?.name || p.category}</td>
+
+                                <td>
+                                    <button
+                                        className="action-button-edit"
+                                        onClick={() => {
+                                            setProductToEdit(p);
+                                            setShowModal(true);
+                                        }}
+                                    >
+                                        <FiEdit />
+                                    </button>
+                                    <button
+                                        className="action-button-delete"
+                                        onClick={async () => {
+                                            if (window.confirm("Delete this product?")) {
+                                                await axios.delete(
+                                                    cleanUrl(`/api/products/${p._id}`),
+                                                    { withCredentials: true }
+                                                );
+                                                fetchProducts();
+                                            }
+                                        }}
+                                    >
+                                        <FiTrash2 />
+                                    </button>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+
+            {showModal && (
+                <ProductModal
+                    product={productToEdit}
+                    onClose={() => {
+                        setShowModal(false);
+                        setProductToEdit(null);
+                    }}
+                    onSave={handleSave}
+                    categories={categories}
+                />
+            )}
+        </div>
+    );
 };
 
 /* ================================================================
-   MAIN ADMIN DASHBOARD
+    USERS VIEW (Unchanged)
+================================================================ */
+const UsersView = () => {
+    // ... (UsersView code remains the same)
+    const [users, setUsers] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const loadUsers = async () => {
+            try {
+                const { data } = await axios.get(cleanUrl("/api/users"), {
+                    withCredentials: true,
+                });
+                setUsers(data);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        loadUsers();
+    }, []);
+
+    if (loading) return <LoadingSpinner />;
+
+    return (
+        <div className="page-view">
+            <h2 className="page-title">Users</h2>
+
+            <div className="table-container">
+                <table className="table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Email</th>
+                            <th>Mobile</th>
+                            <th>Name</th>
+                            <th>Admin</th>
+                            <th>Joined</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {users.map((u) => (
+                            <tr key={u._id}>
+                                <td>{u._id}</td>
+                                <td>{u.email}</td>
+                                <td>{u.mobilenum}</td>
+                                <td>{u.username}</td>
+                                <td>
+                                    {u.isAdmin ? (
+                                        <span className="status-badge status-paid">Yes</span>
+                                    ) : (
+                                        <span className="status-badge status-processing">No</span>
+                                    )}
+                                </td>
+                                <td>{new Date(u.createdAt).toLocaleDateString()}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    );
+};
+
+/* ================================================================
+    MAIN ADMIN DASHBOARD (Unchanged)
 ================================================================ */
 const AdminDashboard = () => {
-  const [view, setView] = useState("dashboard");
-  const { user } = useContext(AuthContext);
+    // ... (AdminDashboard code remains the same)
+    const [view, setView] = useState("dashboard");
+    const { user } = useContext(AuthContext);
 
-  const renderView = () => {
-    switch (view) {
-      case "dashboard":
-        return <DashboardView />;
-      case "orders":
-        return <OrdersView />;
-      case "products":
-        return <ProductsView user={user} />;
-      case "users":
-        return <UsersView />;
-      default:
-        return <DashboardView />;
-    }
-  };
+    const renderView = () => {
+        switch (view) {
+            case "dashboard":
+                return <DashboardView />;
+            case "orders":
+                return <OrdersView />;
+            case "products":
+                return <ProductsView user={user} />;
+            case "users":
+                return <UsersView />;
+            default:
+                return <DashboardView />;
+        }
+    };
 
-  return (
-    <div className="admin-layout">
-      <Sidebar view={view} setView={setView} user={user} />
-      <div className="main-content">{renderView()}</div>
-    </div>
-  );
+    return (
+        <div className="admin-layout">
+            <Sidebar view={view} setView={setView} user={user} />
+            <div className="main-content">{renderView()}</div>
+        </div>
+    );
 };
 
 export default AdminDashboard;
