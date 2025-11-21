@@ -42,7 +42,7 @@ router.get('/:id', async (req, res) => {
 router.post('/', protect, admin, async (req, res) => {
   try {
     // Accept either image (string) or images (array)
-    const { name, price, image, images, category, stock, description, discountPrice } = req.body;
+    const { name, price, image, images, category, stock, description, discountPrice,sizes } = req.body;
     if (!name || !price || (!image && !images) || !category || !stock || !description) {
       return res.status(400).json({ message: 'Missing required product fields' });
     }
@@ -61,6 +61,7 @@ router.post('/', protect, admin, async (req, res) => {
       stock,
       description,
       discountPrice,
+      sizes,
     });
     const createdProduct = await product.save();
     res.status(201).json(createdProduct);

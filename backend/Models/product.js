@@ -43,6 +43,11 @@ const productSchema = new mongoose.Schema(
       min: [0, "Stock cannot be negative"],
     },
 
+    sizes:{
+        type:[String], //array of Strings
+        default:[],
+    },
+
     category: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Category", // separate Category model recommended

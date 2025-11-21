@@ -107,25 +107,26 @@ const ErrorDisplay = ({ message }) => (
 const ProductModal = ({ product, onClose, onSave, categories }) => {
   // ensure discountPrice exists for both create & edit
   const initialForm = product
-    ? { ...product, discountPrice: product.discountPrice ?? 0 }
+    ? { ...product, discountPrice: product.discountPrice ?? 0 ,sizes :product.sizes ?? []}
     : {
-        _id: "",
-        name: "",
-        price: 0,
-        discountPrice: 0, // NEW
-        image: "",
-        images: [],
-        category: "",
-        stock: 0,
-        description: "",
-      };
+      _id: "",
+      name: "",
+      price: 0,
+      discountPrice: 0, // NEW
+      image: "",
+      images: [],
+      category: "",
+      stock: 0,
+      description: "",
+      sizes: []
+    };
 
   const [formData, setFormData] = useState(initialForm);
 
   // Ensure if product prop changes while modal is open (rare), form updates.
   useEffect(() => {
     if (product) {
-      setFormData({ ...product, discountPrice: product.discountPrice ?? 0 });
+      setFormData({ ...product, discountPrice: product.discountPrice ?? 0, sizes: product.sizes ?? [] });
     }
   }, [product]);
 
@@ -188,6 +189,23 @@ const ProductModal = ({ product, onClose, onSave, categories }) => {
     onSave(payload, isEditing);
   };
 
+  //size adding logic
+  const allSizes = ["S", "M", "L", "XL", "XXL"];
+
+  const toggleSize = (size) => {
+    setFormData(prev => {
+            const currentSizes = prev.sizes || []; // Handle case where it might be null/undefined initially
+            const newSizes = currentSizes.includes(size)
+                ? currentSizes.filter(s => s !== size)
+                : [...currentSizes, size];
+            
+            return {
+                ...prev,
+                sizes: newSizes
+            };
+        });
+    };
+
   return (
     <div className="modal-overlay">
       <div className="modal">
@@ -227,7 +245,7 @@ const ProductModal = ({ product, onClose, onSave, categories }) => {
 
               {/* NEW: Discount Price (right under Price as requested) */}
               <div className="form-group">
-                <label>Discount Price</label>
+                <label>Discount</label>
                 <input
                   type="number"
                   name="discountPrice"
@@ -265,6 +283,22 @@ const ProductModal = ({ product, onClose, onSave, categories }) => {
                   </option>
                 ))}
               </select>
+            </div>
+
+            {/* Size Field*/}
+            <div className="form-group">
+              <label>Sizes</label>
+              {allSizes.map(size => (
+                <label key={size}>
+                  <input
+                    type="checkbox"
+                    checked={formData.sizes.includes(size)}
+                    onChange={() => toggleSize(size)}
+                  />
+                  {size}
+                </label>
+              ))}
+
             </div>
 
             {/* Image URL */}
@@ -562,10 +596,10 @@ const ProductsView = ({ user }) => {
             alt: productData.name,
           },
         ],
-        discountPrice: productData.discountPrice
+        discountPrice: productData.discountPrice,
       };
 
-      console.log("payload",payload);
+      console.log("payload", payload);
 
       if (isEditing) {
         await axios.put(
@@ -594,15 +628,15 @@ const ProductsView = ({ user }) => {
       <div className="header-bar">
         <h2 className="page-title">Products</h2>
 
-            <button
-        className="button button-primary"
-        onClick={() => {
-          setProductToEdit(null);
-          setShowModal(true);
-        }}
-      >
-        <FiPlus /> Add Product
-      </button>
+        <button
+          className="button button-primary"
+          onClick={() => {
+            setProductToEdit(null);
+            setShowModal(true);
+          }}
+        >
+          <FiPlus /> Add Product
+        </button>
       </div>
 
       <div className="table-container">
@@ -613,7 +647,7 @@ const ProductsView = ({ user }) => {
               <th>ID</th>
               <th>Name</th>
               <th>Price</th>
-              <th>Discount Price</th> 
+              <th>Discount Price</th>
               <th>Stock</th>
               <th>Category</th>
               <th>Actions</th>
@@ -622,7 +656,7 @@ const ProductsView = ({ user }) => {
 
           <tbody>
             {products.map((p) => (
-              
+
               <tr key={p._id}>
                 <td>
                   <img
