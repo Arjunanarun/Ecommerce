@@ -8,6 +8,7 @@ import DashBoard from '../Admin/DashBoard';
 import UserDashboard from "../User/userDashboard";
 import Catelogue from "./Catelogue";
 import ProductCard from "../Components/ProductCard";
+import ProductDetail from "../Components/ProductDetail";
 
 export default function App() {
   return (
@@ -24,6 +25,7 @@ export default function App() {
         <Route path="/login" element={<Login />}/>
         <Route path="/user" element={<UserDashboard/>}/>
         <Route path="/catalogues" element={<Catelogue />} />
+        <Route path="/product/:id" element={<ProductDetail />} />
       </Routes>
 
     </AuthProvider>
