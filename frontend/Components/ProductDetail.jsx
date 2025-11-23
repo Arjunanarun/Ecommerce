@@ -9,7 +9,7 @@ const ProductDetail = () => {
   const [productData, setProductData] = useState(null);
   const [selectedImage, setSelectedImage] = useState("");
   const [selectedSizes, setSelectedSizes] = useState([]);
-  const [activeTab, setActiveTab] = useState("description");
+  const [activeTab, setActiveTab] = useState("reviews");
   const [loading, setLoading] = useState(true);
   const currency = "₹";
 
@@ -175,12 +175,12 @@ const ProductDetail = () => {
       {/* Description and Reviews Section */}
       <div className="pd-bottom-section">
         <div className="pd-tab-header">
-          <button
+          {/* <button
             className={`pd-tab ${activeTab === "description" ? "pd-tab-active" : ""}`}
             onClick={() => setActiveTab("description")}
           >
             Description
-          </button>
+          </button> */}
           <button
             className={`pd-tab ${activeTab === "reviews" ? "pd-tab-active" : ""}`}
             onClick={() => setActiveTab("reviews")}
@@ -190,22 +190,14 @@ const ProductDetail = () => {
         </div>
         
         <div className="pd-tab-content">
-          {activeTab === "description" && (
+          {/* {activeTab === "description" && (
             <>
               <p>
-                Clara is your go-to destination for exquisite Indian Kurtis that
-                blend traditional craftsmanship with contemporary fashion. Discover
-                our wide range of elegant and comfortable kurtis designed to make
-                you stand out on any occasion.
+                {productData.description}
               </p>
-              <p>
-                Clara is your go-to destination for exquisite Indian Kurtis that
-                blend traditional craftsmanship with contemporary fashion. Discover
-                our wide range of elegant and comfortable kurtis designed to make
-                you stand out on any occasion.
-              </p>
+              
             </>
-          )}
+          )} */}
           
           {activeTab === "reviews" && (
             <div className="pd-reviews-content">

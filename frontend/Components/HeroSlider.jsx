@@ -1,13 +1,25 @@
 import React, { useState, useEffect, useRef } from "react";
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import "./HeroSlider.css";
+import banner1 from '../assets/bannerImages/banner1.jpg';
+import banner2 from '../assets/bannerImages/banner2.jpg';
+import banner3 from '../assets/bannerImages/banner3.jpg';
+import banner4 from '../assets/bannerImages/banner4.jpg';
+import banner5 from '../assets/bannerImages/banner5.jpg';
 
+// const images = [
+//   "https://images.unsplash.com/photo-1521334884684-d80222895322?auto=format&fit=crop&w=1600&q=80", // Woman in fashion outfit
+//   "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=1600&q=80", // Clothing rack
+//   "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=1600&q=80", // Man wearing jacket
+//   "https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?auto=format&fit=crop&w=1600&q=80", // Shoes & accessories
+//   "https://images.unsplash.com/photo-1520975918318-3a29f5b9e8a5?auto=format&fit=crop&w=1600&q=80", // Modern fashion store interior
+// ];
 const images = [
-  "https://images.unsplash.com/photo-1521334884684-d80222895322?auto=format&fit=crop&w=1600&q=80", // Woman in fashion outfit
-  "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=1600&q=80", // Clothing rack
-  "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=1600&q=80", // Man wearing jacket
-  "https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?auto=format&fit=crop&w=1600&q=80", // Shoes & accessories
-  "https://images.unsplash.com/photo-1520975918318-3a29f5b9e8a5?auto=format&fit=crop&w=1600&q=80", // Modern fashion store interior
+  banner1, // Woman in fashion outfit
+  banner2, // Clothing rack
+  banner3, // Man wearing jacket
+  banner4, // Shoes & accessories
+  banner5, // Modern fashion store interior
 ];
 
 
