@@ -11,6 +11,8 @@ import ProductCard from "../Components/ProductCard";
 import {ToastContainer} from 'react-toastify';
 import Admin from "../Admin/Admin";
 import 'react-toastify/dist/ReactToastify.css';
+import ProductDetail from "../Components/ProductDetail";
+
 export default function App() {
   return (
     <AuthProvider>
@@ -26,6 +28,7 @@ export default function App() {
         <Route path="/login" element={<Login />}/>
         <Route path="/user" element={<UserDashboard/>}/>
         <Route path="/catalogues" element={<Catelogue />} />
+        <Route path="/product/:id" element={<ProductDetail />} />
       </Routes>
 
     </AuthProvider>

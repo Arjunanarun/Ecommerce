@@ -107,7 +107,7 @@
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .hero-slider {
-    height: 70vh;
+    height: 40vh;
   }
 
   .slider-overlay h1 {
