@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect , useContext} from "react";
 import { Menu, X, Search, Instagram, User } from "lucide-react";
 import { IoHomeOutline, IoSearchOutline, IoPersonOutline, IoCartOutline, IoLogoInstagram } from "react-icons/io5";
 import { Link } from "react-router-dom";
+import { AuthContext } from "../Context/AuthContext";
 import "./Nav.css";
 
 const MobileNavbar = () => {
+  const {user}=useContext(AuthContext);
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 1024);
@@ -35,27 +37,27 @@ const MobileNavbar = () => {
 
         {/* Center - Logo or Links */}
         {isMobile ? (
-          <div className="nav-logo">MaternityHub</div>
+          <div className="nav-logo">MangaiWears</div>
         ) : (
           <>
-            <div className="nav-logo">MaternityHub</div>
+            <div className="nav-logo">MangaiWears</div>
             <div className="nav-center-links">
               <Link to="/">Home</Link>
+              <Link to="/Products" style={{color:"red"}}>Sale</Link>
               <Link to="/new-arrivals">New Arrivals</Link>
               <Link to="/catalogues">Catalogues</Link>
-              <Link to="/account">Login / Account</Link>
             </div>
+            <div className="rightbar">
+                  <Link to="/search">
+                      <IoSearchOutline size={30} color="black"/>
+              </Link>
+              <Link to="/cart">
+                      <IoCartOutline size={30} color="black"/>
+              </Link>
+              </div>
           </>
         )}
 
-        {/* Right - Search + Icon (Instagram or Profile) */}
-        <div className="nav-icons">
-            <Link to="/profile" className="icon">
-              <IoPersonOutline size={24} 
-                color="green"
-              />
-            </Link>
-        </div>
       </nav>
 
       {/* --- MOBILE SLIDE MENU (85% HEIGHT) --- */}
@@ -86,7 +88,7 @@ const MobileNavbar = () => {
                 Catalogues
               </Link>
               <Link to="/account" onClick={() => setMenuOpen(false)}>
-                Login / Account
+                Login
               </Link>
               <a
                 href="https://instagram.com/"

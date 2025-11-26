@@ -54,7 +54,7 @@
   position: absolute;
   top: 12px;
   right: 12px;
-  background: #34db5b;
+  background: #53ac53;
   color: white;
   padding: 4px 8px;
   border-radius: 4px;
@@ -88,8 +88,9 @@
 .price-row {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: .3rem;
   margin: 0 16px 16px;
+  justify-content: space-between;
   flex-wrap: wrap;
 }
 
@@ -103,17 +104,16 @@
 .new-price {
   font-size: 18px;
   font-weight: 700;
-  color: #2ecc71;
+  color: #53ac53;
 }
 
 .save {
   font-size: 12px;
-  background: #ffebee;
+  /* background: #ffebee; */
   color: #e74c3c;
   padding: 4px 8px;
   border-radius: 6px;
   font-weight: 600;
-  margin-left: auto;
 }
 
 /* Responsive Design */
@@ -158,13 +158,13 @@
   }
   
   .save {
-    font-size: 11px;
+    font-size: 10px;
     padding: 3px 6px;
   }
   
   .discount-badge,
   .best-seller-tag {
-    font-size: 10px;
+    font-size: 7px;
     padding: 2px 5px;
   }
 }

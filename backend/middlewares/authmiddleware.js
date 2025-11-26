@@ -5,18 +5,15 @@ import User from '../Models/user.js';
 const protect = async (req, res, next) => {
   let token;
 
-  // Read the JWT from the 'token' cookie
   token = req.cookies.token;
 
   if (token) {
     try {
-      // Verify the token using your SECRET_KEY
       const decoded = jwt.verify(token, process.env.SECRET_KEY);
 
-      // Find the user by the ID in the token and attach it to the request
-      // We exclude the password field
+      
       req.user = await User.findById(decoded.id).select('-password');
-
+      console.log("User in Protect",req.user);
       next(); // Move to the next middleware or route handler
     } catch (error) {
       console.error(error);

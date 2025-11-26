@@ -8,25 +8,34 @@ const orderSchema = new mongoose.Schema(
       required: true,
       ref: 'User',
     },
+
+    orderId:{
+      type:String,
+      required:true,
+      unique:true,
+    },
+    
     // Array of items in the order
     orderItems: [
       {
-        name: { type: String, required: true },
-        qty: { type: Number, required: true },
-        image: { type: String, required: true },
-        price: { type: Number, required: true },
-        // Link to the specific product
         product: {
           type: mongoose.Schema.Types.ObjectId,
           required: true,
           ref: 'Product',
         },
-        // Store size/color selected if applicable
-        size: { type: String }, 
-        color: { type: String },
+        quantity:{
+                type:Number,
+                required:true,
+                min:1,
+                default:1,
+            },
+        purchasePrice:{
+          type:Number,
+          required:true,
+        }
       },
     ],
-    // Shipping address object
+
     shippingAddress: {
       address: { type: String, required: true },
       city: { type: String, required: true },
@@ -34,14 +43,13 @@ const orderSchema = new mongoose.Schema(
       country: { type: String, required: true },
     },
     
-    // NEW: Added a paymentMethod field
     paymentMethod: {
       type: String,
+      enum:['COD','CARD','UPI'],
       required: true,
-      default: 'Cash on Delivery', // Default to COD
+      default: 'COD', // Default to COD
     },
 
-    // REMOVED: The paymentResult object has been removed
 
     // Prices
     itemsPrice: {
@@ -64,8 +72,7 @@ const orderSchema = new mongoose.Schema(
       required: true,
       default: 0.0,
     },
-    // Order status
-    // These fields are still useful for COD
+ 
     isPaid: {
       type: Boolean,
       required: true,

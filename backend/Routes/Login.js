@@ -8,7 +8,6 @@ const router = express.Router();
 
 router.post('/', async (req, res) => {
   try {
-    // Only 'email', 'mobilenum', 'password' are needed from body
     const { email, mobilenum, password } = req.body;
     let user;
 
@@ -16,8 +15,6 @@ router.post('/', async (req, res) => {
     if (email) {
       user = await User.findOne({ email: email });
     } else if (mobilenum) {
-      // 1. === FIX ===
-      // Changed 'mobile' to 'mobilenum' to match your User.js model
       user = await User.findOne({ mobilenum: mobilenum });
     }
 
@@ -30,27 +27,22 @@ router.post('/', async (req, res) => {
         return res.status(401).json({ error: 'Please log in using Google' });
     }
 
-    // Manually compare the plain password with the hashed password from DB
     const match = await bcrypt.compare(password, user.password);
 
     if (!match) {
-      // Changed "password thappu" to a more professional message
       return res.status(400).json({ error: 'Invalid password' });
     }
 
-    // Sign JWT with secret from .env file
     const token = jwt.sign({ id: user._id }, process.env.SECRET_KEY, { expiresIn: '1h' });
 
     res.cookie("token", token, {
       httpOnly: true,
-      secure: true, // Use secure in prod
+      secure: true, 
       sameSite: "none",
       maxAge: 3600000, // 1 hour
     });
 
-    // 2. === FIX ===
-    // Send back the full user object along with the token.
-    // Your frontend Login.jsx expects this.
+    
     return res.status(200).json({
       token: token,
       user: {
@@ -68,13 +60,11 @@ router.post('/', async (req, res) => {
   }
 });
 
-// Your Auth middleware and forget password routes
 const Auth = async (req, res, next) => {
   try {
     const { email } = req.body;
     const user = await User.findOne({ email: email });
     if (!user) {
-      // Changed "Mobile num is not logged in" to be more accurate
       return res.status(44).json({ message: "User not found" });
     }
     req.user = user;

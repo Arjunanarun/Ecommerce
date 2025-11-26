@@ -1,0 +1,35 @@
+/* Container for centering the spinner and text */
+.spinner-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 100px; /* Ensures visible space even if content is small */
+}
+
+/* Spinner Element */
+.loading-spinner {
+    /* Use CSS Variables defined in the React component for customization */
+    width: var(--spinner-size);
+    height: var(--spinner-size);
+    border: var(--spinner-border-width) solid #f3f3f3; /* Light grey border (the base) */
+    border-top: var(--spinner-border-width) solid var(--spinner-color, #4CAF50); /* Colored border (the moving part) */
+    border-radius: 50%;
+    
+    /* Animation: spin infinitely */
+    animation: spin 1s linear infinite;
+    margin-bottom: 8px;
+}
+
+.spinner-text {
+    font-size: 14px;
+    color: #555;
+    margin: 0;
+}
+
+/* Keyframe animation for rotation */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

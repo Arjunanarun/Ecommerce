@@ -18,6 +18,7 @@ import orderRoutes from './Routes/Order.js';
 import userRoutes from './Routes/User.js';
 import categoryRoutes from './Routes/Category.js';
 import uploadRoutes from './Routes/Upload.js';
+import cartRoutes from './Routes/Cart.js';
 
 // --- DB Connection ---
 import { DatabaseConnect } from './utils/db.js';
@@ -49,6 +50,7 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/upload', uploadRoutes);
+app.use('/api/carts',cartRoutes);
 
 // ✅ **THIS IS THE FIX**
 // Serve the 'uploads' folder from the project root (one level up from 'backend')

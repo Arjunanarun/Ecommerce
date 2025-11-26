@@ -1,5 +1,4 @@
 import mongoose from 'mongoose';
-// 'bcrypt' is no longer needed here
 
 const userSchema = new mongoose.Schema(
   {
@@ -39,14 +38,12 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: null,
     },
-    // --- THIS IS THE NEW FIELD ---
     isAdmin: {
       type: Boolean,
       required: true,
-      default: false, // Default all new users to NOT be admins
+      default: false, 
     },
-    // -----------------------------
-    // Your forget password fields
+   
     otp: {
       type: String,
       default: null,
@@ -61,11 +58,7 @@ const userSchema = new mongoose.Schema(
   }
 );
 
-// Removed the .pre('save') hook for hashing
-// Removed the .matchPassword() method
 
-// === THIS IS THE FIX ===
-// Check if the model already exists before compiling it
 const User = mongoose.models.User || mongoose.model('User', userSchema);
 
 export default User;

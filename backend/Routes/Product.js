@@ -65,7 +65,6 @@ router.post('/', protect, admin, async (req, res) => {
         const createdProduct = await product.save();
         res.status(201).json(createdProduct);
     } catch (error) {
-        // Robust error handling
         if (error.name === 'ValidationError') {
             const messages = Object.values(error.errors).map(val => val.message);
             console.error('Mongoose Validation Error:', messages);
@@ -87,18 +86,15 @@ router.put('/:id', protect, admin, async (req, res) => {
         const product = await Product.findById(req.params.id);
 
         if (product) {
-            // Assignment logic using explicit check (safest method for updates)
             if (name !== undefined) product.name = name;
             if (price !== undefined) product.price = price;
             if (description !== undefined) product.description = description;
             if (stock !== undefined) product.stock = stock;
             if (category !== undefined) product.category = category;
 
-            // Assign new fields
             if (discountPrice !== undefined) product.discountPrice = discountPrice;
             if (sizes !== undefined) product.sizes = sizes;
 
-            // 🛑 SYNCHRONIZED LOGIC: Use the clean 'images' array directly, if sent
             if (images !== undefined) {
                 product.images = images;
             }
@@ -111,7 +107,6 @@ router.put('/:id', protect, admin, async (req, res) => {
         }
         
     } catch (error) {
-        // Robust error handling for PUT
         if (error.name === 'ValidationError') {
             const messages = Object.values(error.errors).map(val => val.message);
             console.error('Mongoose Validation Error:', messages);
@@ -132,7 +127,6 @@ router.put('/:id', protect, admin, async (req, res) => {
 // @access  Private/Admin
 router.delete('/:id', protect, admin, async (req, res) => {
     try {
-        // ... (DELETE logic remains the same)
         const product = await Product.findById(req.params.id);
 
         if (product) {

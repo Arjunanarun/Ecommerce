@@ -8,19 +8,21 @@ import DashBoard from '../Admin/DashBoard';
 import UserDashboard from "../User/userDashboard";
 import Catelogue from "./Catelogue";
 import ProductCard from "../Components/ProductCard";
-
+import {ToastContainer} from 'react-toastify';
+import Admin from "../Admin/Admin";
+import 'react-toastify/dist/ReactToastify.css';
 export default function App() {
   return (
     <AuthProvider>
 
       {/* Show login always (if that's what you want) */}
       {/* <ProductCard/> */}
-    
+      <ToastContainer position="top-right" autoClose={5000}/>
       <Routes>
         <Route path="/index.html" element={<Navigate to="/" replace />} />
         <Route path="/" element={<BasicRoutes />} />
         <Route path="/fp" element={<ForgetPassword />} />
-        <Route path="/admin" element={<DashBoard/>}/>
+        <Route path="/admin" element={<Admin element={<DashBoard/>}/>}/>
         <Route path="/login" element={<Login />}/>
         <Route path="/user" element={<UserDashboard/>}/>
         <Route path="/catalogues" element={<Catelogue />} />

@@ -9,7 +9,6 @@ const router = express.Router();
 // @access  Private/Admin
 router.get('/', protect, admin, async (req, res) => {
   try {
-    // Exclude passwords when fetching all users
     const users = await User.find({}).select('-password');
     res.json(users);
   } catch (error) {
@@ -33,7 +32,5 @@ router.put('/profile', protect, async (req, res) => {
   }
 });
 
-// You would add more routes here, e.g., DELETE /api/users/:id (for admins)
-// or GET /api/users/profile (for logged-in users)
 
 export default router;

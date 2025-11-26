@@ -35,7 +35,7 @@ const cleanUrl = (path) => {
 /* ================================================================
     SIDEBAR (Unchanged)
 ================================================================ */
-const Sidebar = ({ view, setView, user }) => {
+const Sidebar = ({ view, setView, user, logout }) => {
     // ... (Sidebar code remains the same)
     const navItems = [
         { name: "Dashboard", icon: <FiLayout />, view: "dashboard" },
@@ -43,6 +43,10 @@ const Sidebar = ({ view, setView, user }) => {
         { name: "Products", icon: <FiPackage />, view: "products" },
         { name: "Users", icon: <FiUsers />, view: "users" },
     ];
+
+    const handleLogout=()=>{
+      logout();
+    }
 
     return (
         <div className="sidebar">
@@ -66,11 +70,12 @@ const Sidebar = ({ view, setView, user }) => {
                     ))}
                 </ul>
             </nav>
-
+                    <div onClick={handleLogout}>logout</div>
             <div className="sidebar-footer">
                 <p className="sidebar-user-name">{user?.username || "Admin"}</p>
                 <p className="sidebar-user-email">{user?.email}</p>
             </div>
+            
         </div>
     );
 };
@@ -837,7 +842,7 @@ const UsersView = () => {
 const AdminDashboard = () => {
     // ... (AdminDashboard code remains the same)
     const [view, setView] = useState("dashboard");
-    const { user } = useContext(AuthContext);
+    const { user,logout } = useContext(AuthContext);
 
     const renderView = () => {
         switch (view) {
@@ -856,7 +861,7 @@ const AdminDashboard = () => {
 
     return (
         <div className="admin-layout">
-            <Sidebar view={view} setView={setView} user={user} />
+            <Sidebar view={view} setView={setView} user={user} logout={logout} />
             <div className="main-content">{renderView()}</div>
         </div>
     );

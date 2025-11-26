@@ -28,6 +28,13 @@ router.get('/myorders', protect, async (req, res) => {
 });
 
 // You would add more routes here, e.g., POST /api/orders (for users)
+router.post('/',protect,async(req,res)=>{
+  try{
+    
+  }catch(err){
+
+  }
+})
 // or PUT /api/orders/:id/deliver (for admins)
 
 export default router;
