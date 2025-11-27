@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
-import Cart from "../Models/cart";
-
+import Cart from "../Models/cart.js";
+import express from 'express';
 const router=express.Router();
 
 router.post('/',async(req,res)=>{
