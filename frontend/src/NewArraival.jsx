@@ -16,10 +16,11 @@ export default function NewArrivalSection() {
       const response = await axios.get("http://localhost:4000/api/products/");
       const allProducts = response.data;
 
-      const latest = allProducts.slice(-4).reverse();
+      const latest = allProducts;
 
       setLatestProducts(latest);
       console.log("Latest 4 products:", latest);
+      console.log("image url",latest[0].images[0].url)
     } catch (error) {
       console.error("Error fetching products:", error);
     }

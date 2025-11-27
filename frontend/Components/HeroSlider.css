@@ -107,11 +107,11 @@
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .hero-slider {
-    height: 40vh;
+    height: 70vh;
   }
 
   .slider-overlay h1 {
-    font-size: 2rem;
+    font-size: 1.5rem;
   }
 
   .slider-overlay p {

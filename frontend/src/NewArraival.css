@@ -1,8 +1,10 @@
+/* --- NewArraival.css (Focused on Desktop Layout) --- */
+
 .new-arrivals {
   width: 100%;
-  margin-top: 60px;
-  padding: 0 5vw;
+  padding: 30px 5vw; /* Padding on the sides */
   background: #fff;
+  font-family: Arial, sans-serif;
 }
 
 /* Header section */
@@ -10,20 +12,23 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 25px; /* Spacing below the header */
 }
 
 .section-header h2 {
-  font-size: clamp(1.4rem, 2vw, 1.8rem);
+  /* Mimic the "Maternity Kurthis" header style */
+  font-size: 1.8rem; 
   font-weight: 600;
+  color: #333; /* Dark text color */
+  margin: 0;
 }
 
 .view-more {
   text-decoration: none;
   background: transparent;
   border: none;
-  font-size: clamp(0.9rem, 1.5vw, 1rem);
-  color: #333;
+  font-size: 1rem;
+  color: #555; /* Neutral color for link */
   cursor: pointer;
   font-weight: 500;
   transition: color 0.3s ease;
@@ -34,116 +39,34 @@
   text-decoration: underline;
 }
 
-/* Horizontal slider */
+/* Horizontal slider container - Adjusted for 4-column Desktop Grid */
 .product-slider {
   display: flex;
-  gap: 18px;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  padding-bottom: 14px;
-  -webkit-overflow-scrolling: touch;
+  /* Use a consistent, visible gap */
+  gap: 20px; 
+  /* Prevent horizontal scrolling on desktop since we're creating a static grid */
+  overflow-x: hidden; 
+  flex-wrap: nowrap;
 }
 
-.product-slider::-webkit-scrollbar {
-  display: none;
+/* Product card sizing for a 4-column layout */
+.product-slider .product-card {
+  /* flex-grow: 0 (don't grow), flex-shrink: 0 (don't shrink) */
+  /* flex-basis: Sets the size to ensure 4 fit cleanly with 20px gaps */
+  flex: 0 0 calc(25% - 15px); 
+  /* Calculation: (4 items * 20px gap = 60px total gap). 60px / 4 items = 15px per item. */
+
+  /* Ensure the card is rendered as a block for the desired sizing */
+  min-width: 0;
 }
 
-/* Product card - Base (mobile) */
-/* Product card - Base (mobile) */
-.product-card {
-  /* This is our 2-card mobile layout */
-  flex: 0 0 calc(50% - 9px);
-  
-  scroll-snap-align: start;
-  background: #fff;
-  border-radius: 14px;
-  overflow: hidden;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);
-
-  /* --- ADD THIS LINE --- */
-  text-decoration: none; /* This removes the link line */
-  
-  /* This is our smooth resize transition */
-  transition: transform 0.3s ease, 
-              box-shadow 0.3s ease,
-              flex-basis 0.4s ease;
-}
-
-.product-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.1);
-}
-
-.product-card img {
-  width: 100%;
-  /* --- KEY CHANGE 2: "update the card ratio 80, 20" --- */
-  /* This 9/16 ratio is very tall, making the image */
-  /* take up ~80-90% of the card's visual height. */
-  aspect-ratio: 9 / 16;
-  object-fit: cover;
-  display: block; 
-}
-
-/* --- This is the "20" of the 80/20 ratio --- */
-/* This text block is small and compact */
-.product-info {
-  padding: 12px 14px;
-  /* The white background is set on .product-card */
-}
-
-/* In your NewArrivals.css file... */
-
-.product-card h3 {
-  font-size: 0.95rem;
-  font-weight: 500;
-  color: #333;
-  margin: 0;
-  min-height: 2.4em; /* For 2 lines */
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  
-  /* --- ADD THIS LINE --- */
-  text-decoration: none; 
-}
-
-.product-card p {
-  font-size: 1rem;
-  font-weight: 600;
-  color: #111;
-  margin: 4px 0 0;
-  overflow: visible;
-  text-overflow: clip;
-
-  /* --- ADD THIS LINE --- */
-  text-decoration: none; 
-}
-
-
-/* --- Media Queries (ADJUSTED) --- */
-
-/* Base style is now 2 cards, so 600px breakpoint is removed */
-
-/* 🟦 Medium screens (≥768px): show 3 cards */
-@media (min-width: 768px) {
-  .product-card {
-    /* (33.33% width - 2/3 of the 18px gap) */
-    flex: 0 0 calc(33.33% - 12px);
+/* If you need to support smaller screens (important for responsiveness, even if desktop-focused): */
+@media (max-width: 1024px) {
+  /* Fallback to 2-card scrollable layout for smaller desktop/tablet views */
+  .product-slider {
+    overflow-x: auto;
   }
-}
-
-/* 🟨 Large desktops (≥1200px): show 4 cards that GROW */
-@media (min-width: 1200px) {
-  .product-card {
-    /* (25% width - 3/4 of the 18px gap) */
-    flex: 0 0 calc(25% - 13.5px);
-  }
-}
-
-/* 🟥 Ultra-wide (≥1600px): just increase the side margins */
-@media (min-width: 1600px) {
-  .new-arrivals {
-    padding: 0 8vw;
+  .product-slider .product-card {
+    flex: 0 0 calc(50% - 10px); /* 2 cards on smaller screens */
   }
 }
