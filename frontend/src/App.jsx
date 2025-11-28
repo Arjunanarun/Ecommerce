@@ -12,6 +12,7 @@ import {ToastContainer} from 'react-toastify';
 import Admin from "../Admin/Admin";
 import 'react-toastify/dist/ReactToastify.css';
 import ProductDetail from "../Components/ProductDetail";
+import MobileMenu from "../Components/MobileMenu";
 
 export default function App() {
   return (
@@ -29,6 +30,7 @@ export default function App() {
         <Route path="/user" element={<UserDashboard/>}/>
         <Route path="/catalogues" element={<Catelogue />} />
         <Route path="/product/:id" element={<ProductDetail />} />
+        <Route path="//" element={<MobileMenu/>}/>
       </Routes>
 
     </AuthProvider>

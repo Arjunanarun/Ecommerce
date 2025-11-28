@@ -1,72 +1,83 @@
-/* --- NewArraival.css (Focused on Desktop Layout) --- */
+/* --- NewArraival.css (Fully Responsive Text) --- */
 
-.new-arrivals {
+.na-section-container {
   width: 100%;
-  padding: 30px 5vw; /* Padding on the sides */
+  padding: 30px 5vw;
+  /* Padding on the sides */
   background: #fff;
-  font-family: Arial, sans-serif;
 }
 
 /* Header section */
-.section-header {
+.na-section-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 25px; /* Spacing below the header */
+  margin-bottom: 25px;
+  /* Spacing below the header */
 }
 
-.section-header h2 {
+.na-section-header h2 {
   /* Mimic the "Maternity Kurthis" header style */
-  font-size: 1.8rem; 
+  font-family: "Italiana", sans-serif;
+  /* 🌟 RESPONSIVE TEXT: Scales between 1.4rem (mobile minimum) and 2rem (desktop maximum) 🌟 */
+  font-size: clamp(1.2rem, 5vw, 2rem);
   font-weight: 600;
-  color: #333; /* Dark text color */
+  color: #333;
+  /* Dark text color */
   margin: 0;
 }
 
-.view-more {
+.na-view-more {
   text-decoration: none;
   background: transparent;
   border: none;
-  font-size: 1rem;
-  color: #555; /* Neutral color for link */
+  /* 🌟 RESPONSIVE TEXT: Scales between 0.9rem (mobile minimum) and 1.5rem (desktop maximum) 🌟 */
+  font-size: clamp(0.9rem, 3vw, 1.5rem);
+  color: #555;
+  /* Neutral color for link */
   cursor: pointer;
   font-weight: 500;
   transition: color 0.3s ease;
 }
 
-.view-more:hover {
+.na-view-more:hover {
   color: #000;
   text-decoration: underline;
 }
 
 /* Horizontal slider container - Adjusted for 4-column Desktop Grid */
-.product-slider {
+.na-product-slider {
   display: flex;
   /* Use a consistent, visible gap */
-  gap: 20px; 
+  gap: 20px;
   /* Prevent horizontal scrolling on desktop since we're creating a static grid */
-  overflow-x: hidden; 
+  overflow-x: hidden;
   flex-wrap: nowrap;
 }
 
 /* Product card sizing for a 4-column layout */
-.product-slider .product-card {
+.na-product-slider .product-card {
   /* flex-grow: 0 (don't grow), flex-shrink: 0 (don't shrink) */
   /* flex-basis: Sets the size to ensure 4 fit cleanly with 20px gaps */
-  flex: 0 0 calc(25% - 15px); 
+  flex: 0 0 calc(25% - 15px);
   /* Calculation: (4 items * 20px gap = 60px total gap). 60px / 4 items = 15px per item. */
 
   /* Ensure the card is rendered as a block for the desired sizing */
   min-width: 0;
 }
 
-/* If you need to support smaller screens (important for responsiveness, even if desktop-focused): */
+/* Fallback/Mobile Layout */
 @media (max-width: 1024px) {
+
   /* Fallback to 2-card scrollable layout for smaller desktop/tablet views */
-  .product-slider {
+  .na-product-slider {
     overflow-x: auto;
   }
-  .product-slider .product-card {
-    flex: 0 0 calc(50% - 10px); /* 2 cards on smaller screens */
+
+  .na-product-slider .product-card {
+    flex: 0 0 calc(50% - 10px);
+    /* 2 cards on smaller screens */
   }
 }
+
+/* Removed @media (max-width : 280px) h2 rule as clamp handles minimum size */

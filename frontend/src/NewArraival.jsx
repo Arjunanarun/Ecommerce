@@ -20,7 +20,7 @@ export default function NewArrivalSection() {
 
       setLatestProducts(latest);
       console.log("Latest 4 products:", latest);
-      console.log("image url",latest[0].images[0].url)
+      console.log("image url", latest[0].images[0].url)
     } catch (error) {
       console.error("Error fetching products:", error);
     }
@@ -29,15 +29,15 @@ export default function NewArrivalSection() {
     getLatestProducts();
   }, [])
   return (
-    <section className="new-arrivals">
-      <div className="section-header">
+    <section className="na-section-container">
+      <div className="na-section-header">
         <h2>New Arrivals</h2>
         {/* --- KEY CHANGE 2: Changed <button> to <a> --- */}
         {/* This matches the CSS we wrote for .view-more */}
-        <a href="/catalogues" className="view-more">View all</a>
+        <a href="/catalogues" className="na-view-more">View all</a>
       </div>
 
-      <div className="product-slider">
+      <div className="na-product-slider">
         {
           latestProducts.map((item, index) => (
             <ProductCard

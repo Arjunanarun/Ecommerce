@@ -1,30 +1,32 @@
 /* --- Base Styling (CHANGED) --- */
-.collections {
+.cl-section-container {
   width: 100%;
   /* CHANGED: Matched NewArrivals background */
   background: #fff;
-  padding: 40px 5vw;
+  padding: 20px 5vw;
   font-family: "Inter", "Helvetica Neue", sans-serif;
 }
 
 /* --- Section Header (CHANGED) --- */
-.section-header {
+.cl-section-header {
   display: flex;
   justify-content: space-between;
-  align-items: center; /* CHANGED: To match NewArrivals */
+  align-items: center;
+  /* CHANGED: To match NewArrivals */
   margin-bottom: 20px;
 }
 
-.section-header h2 {
+.cl-section-header h2 {
   /* CHANGED: Matched NewArrivals font style */
   font-size: clamp(1.4rem, 2vw, 1.8rem);
   font-weight: 600;
+  font-family: "Italiana", sans-serif;
   /* Removed Lora font for consistency */
   color: #333;
 }
 
 /* --- "View More" Link (CHANGED) --- */
-.view-more {
+.cl-view-more {
   text-decoration: none;
   background: transparent;
   border: none;
@@ -37,14 +39,14 @@
   /* Removed all old brown-theme styles */
 }
 
-.view-more:hover {
+.cl-view-more:hover {
   /* CHANGED: Matched NewArrivals hover */
   color: #000;
   text-decoration: underline;
 }
 
 /* --- Horizontal scroll (CHANGED) --- */
-.collection-slider {
+.cl-collection-slider {
   display: flex;
   /* CHANGED: Matched NewArrivals gap */
   gap: 18px;
@@ -54,23 +56,26 @@
   padding: 10px 0 20px 0;
 }
 
-.collection-slider::-webkit-scrollbar {
+.cl-collection-slider::-webkit-scrollbar {
   display: none;
 }
-.collection-slider {
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
+
+.cl-collection-slider {
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
 }
 
 /* --- Card styling (CHANGED to CIRCLE) --- */
-.collection-card {
+.cl-collection-card {
   /* --- KEY CHANGE 1: "Two cards visible in mobile" --- */
   /* Matched NewArrivals 2-card mobile layout */
   flex: 0 0 calc(50% - 9px);
-  
+
   scroll-snap-align: start;
-  display: block; 
-  text-decoration: none; 
+  display: block;
+  text-decoration: none;
 
   /* The card itself is now just a container */
   background: transparent;
@@ -79,28 +84,31 @@
   box-shadow: none;
 
   /* This is our smooth resize transition */
-  transition: transform 0.3s ease, 
-              flex-basis 0.4s ease;
+  transition: transform 0.3s ease,
+    flex-basis 0.4s ease;
 }
 
-.collection-card img {
+.cl-collection-card img {
   width: 100%;
   /* --- KEY CHANGE 2: "Different Shape" --- */
   /* This makes the image a circle */
   aspect-ratio: 1 / 1;
   object-fit: cover;
-  border-radius: 50%; /* This is the magic! */
-  
+  border-radius: 50%;
+  /* This is the magic! */
+
   /* Add shadow to the image, not the card */
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.07);
   transition: transform 0.4s ease, box-shadow 0.4s ease;
 }
 
-.collection-card h3 {
+.cl-collection-card h3 {
   /* This is the text *below* the circle */
   padding: 0;
-  margin-top: 16px; /* Space from circle */
-  font-size: 0.95rem; /* Matched NewArrivals */
+  margin-top: 16px;
+  /* Space from circle */
+  font-size: 0.95rem;
+  /* Matched NewArrivals */
   font-weight: 500;
   color: #333;
   text-align: center;
@@ -108,17 +116,17 @@
 }
 
 /* --- Hover (CHANGED) --- */
-.collection-card:hover {
+.cl-collection-card:hover {
   /* Lift the whole card */
   transform: translateY(-5px);
 }
 
-.collection-card:hover img {
+.cl-collection-card:hover img {
   /* Make the image shadow bigger */
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
 }
 
-.collection-card:hover h3 {
+.cl-collection-card:hover h3 {
   color: #000;
 }
 
@@ -128,21 +136,21 @@
 
 /* 🟦 Medium screens (≥768px): show 3 cards */
 @media (min-width: 768px) {
-  .collection-card {
+  .cl-collection-card {
     flex: 0 0 calc(33.33% - 12px);
   }
 }
 
 /* 🟨 Large desktops (≥1200px): show 4 cards that GROW */
 @media (min-width: 1200px) {
-  .collection-card {
+  .cl-collection-card {
     flex: 0 0 calc(25% - 13.5px);
   }
 }
 
 /* 🟥 Ultra-wide (≥1600px): just increase the side margins */
 @media (min-width: 1600px) {
-  .collections {
+  .cl-section-container {
     padding: 0 8vw;
   }
 }

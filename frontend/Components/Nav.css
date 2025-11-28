@@ -21,6 +21,7 @@
 }
 
 .nav-center-links{
+   font-family: "Italiana", sans-serif;  
   font-size: 17px;
   font-weight: 400;
   line-height: 18.7px;
@@ -36,8 +37,8 @@
 }
 
 .nav-logo {
-  font-size: 1rem;
-  font-weight: 700;
+ font-size: 1rem;
+ font-weight: 700;
   color: #2b2b2b;
 }
 
@@ -170,7 +171,7 @@
   }
 
   .navbar {
-    height: 70px;
+    height: 90px;
     padding: 0 40px;
     justify-content: space-between;
   }
@@ -185,9 +186,9 @@
   
   .nav-center-links a {
     text-decoration: none;
-   font-family: Poppins, sans-serif;
-font-size: 17px;
-font-weight: 400;
+   font-family: "Italiana", sans-serif;  
+font-size: 24px;
+font-weight: 600;
 line-height: 18.7px;
 color: rgb(0, 0, 0);
     color: #333;
@@ -202,6 +203,12 @@ color: rgb(0, 0, 0);
     display: flex;
     align-items: center;
     gap: 20px;
+  }
+
+  .nav-logo{
+       font-family: "Italiana", sans-serif;  
+
+    font-size: 30px;
   }
 }
 

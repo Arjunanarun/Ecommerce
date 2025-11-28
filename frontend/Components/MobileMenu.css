@@ -2,51 +2,109 @@
 
 .mobile-menu {
   display: flex;
-  justify-content: space-around; /* Distribute items evenly */
+  justify-content: space-around;
+  /* Distribute items evenly */
   align-items: center;
-  
-  position: fixed; /* Stick to the viewport */
+
+  position: fixed;
+  /* Stick to the viewport */
   bottom: 0;
   left: 0;
   width: 100%;
-  
+
   background-color: #ffffff;
   border-top: 1px solid #e0e0e0;
   box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
-  
-  height: 60px; /* Set a fixed height */
-  z-index: 1000; /* Ensure it's on top of other content */
+
+  height: 60px;
+  /* Increased height for better tap area */
+  z-index: 1000;
+  /* Ensure it's on top of other content */
 }
 
 .menu-item {
   display: flex;
-  flex-direction: column; /* Stack icon and text vertically */
+  flex-direction: column;
+  /* Stack icon and text vertically */
   align-items: center;
   justify-content: center;
-  
-  flex-grow: 1; /* Each item takes equal space */
-  
-  color: #757575; /* Default "inactive" color */
+  flex-grow: 1;
+  /* Each item takes equal space */
+
+  color: #757575;
+  /* Default "inactive" color */
   text-decoration: none;
-  font-size: 10px; /* Small text */
+  font-size: 11px;
+  /* Small text */
 }
 
 /* Style for the icon itself */
 .menu-icon {
-  font-size: 24px; /* Size of the icon */
-  margin-bottom: 2px; /* Space between icon and text */
+  font-size: 1.2rem;
+  /* Size of the icon */
+  margin-bottom: 2px;
+  /* Space between icon and text */
+}
+
+/* ---------------------------------- */
+/* --- CART COUNT BADGE STYLING --- */
+/* ---------------------------------- */
+
+/* 1. Wrapper to contain the icon and the absolute badge */
+.cart-icon-wrapper {
+  position: relative;
+  /* CRITICAL: Positioning context for the badge */
+  line-height: 1;
+  /* Prevents line height from messing with icon alignment */
+}
+
+/* 2. Badge styling */
+.cart-count {
+  /* Dimensions and appearance */
+  min-width: 15px;
+  /* Allow badge to grow for double digits */
+  height: 15px;
+  line-height: 18px;
+  /* Note: This is larger than height, causing overflow/ellipse */
+  /* If you want 15px height, line-height should be ~15px too. */
+  padding: 0 2px;
+  /* Horizontal padding for spacing */
+
+  background-color: #ff0000;
+  /* Red */
+  color: white;
+  font-size: 0.7rem;
+  font-weight: 600;
+  border-radius: 10px;
+
+  /* CRITICAL: Absolute positioning relative to the wrapper */
+  position: absolute;
+  top: -5px;
+  /* Adjust vertical position */
+  right: -10px;
+  /* Adjust horizontal position */
+
+  text-align: center;
+  pointer-events: none;
+  /* Allows clicks to pass through to the anchor tag */
 }
 
 /* Optional: Style for the "active" link */
-/* If using NavLink, this class is added automatically */
-.menu-item.active {
-  color: #000000; /* Or your brand's primary color */
+.menu-item.active,
+.menu-item:hover {
+  color: #000000;
 }
 
 /* --- IMPORTANT: Hide on Desktop --- */
 /* We only want this menu on mobile */
-@media (min-width: 769px) {
+@media (min-width: 669px) {
   .mobile-menu {
     display: none;
   }
+}
+
+/* --- Added style for Logged In state distinction --- */
+.menu-item.is-logged-in {
+  /* Changes icon/text color to black (or your brand color) when user is logged in */
+  color: #000000;
 }

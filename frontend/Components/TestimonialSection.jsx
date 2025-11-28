@@ -44,9 +44,9 @@ const testimonialData = [
 const StarRating = ({ rating }) => {
   const stars = Array(5).fill(null);
   return (
-    <div className="star-rating">
+    <div className="ts-star-rating">
       {stars.map((_, index) => (
-        <span key={index} className={index < rating ? "star-filled" : "star-empty"}>
+        <span key={index} className={index < rating ? "ts-star-filled" : "ts-star-empty"}>
           ★
         </span>
       ))}
@@ -58,26 +58,23 @@ const StarRating = ({ rating }) => {
 // --- Main Testimonial Section Component ---
 const TestimonialSection = () => {
   return (
-    <section className="testimonial-section">
-      <div className="section-header">
+    <section className="ts-section-container">
+      <div className="ts-section-header">
         <h2>The Word on Us</h2>
-        <a href="/reviews" className="view-more">
-          Leave a Review
-        </a>
       </div>
 
-      <div className="testimonial-slider">
+      <div className="ts-testimonial-slider">
         {testimonialData.map((item) => (
-          <div key={item.id} className="testimonial-card">
+          <div key={item.id} className="ts-testimonial-card">
             <StarRating rating={item.rating} />
-            <p className="quote-text">"{item.quote}"</p>
-            
+            <p className="ts-quote-text">"{item.quote}"</p>
+
             {/* --- KEY CHANGE: Added profile image and wrapped author info --- */}
-            <div className="author-details">
-              <img src={item.profileImg} alt={item.author} className="profile-image" />
-              <div className="author-text">
-                <span className="author-name">{item.author}</span>
-                <span className="verified-badge">Verified Buyer</span>
+            <div className="ts-author-details">
+              <img src={item.profileImg} alt={item.author} className="ts-profile-image" />
+              <div className="ts-author-text">
+                <span className="ts-author-name">{item.author}</span>
+                <span className="ts-verified-badge">Verified Buyer</span>
               </div>
             </div>
           </div>

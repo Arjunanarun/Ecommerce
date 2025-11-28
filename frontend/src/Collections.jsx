@@ -44,21 +44,17 @@ const maternityCollections = [
 const Collections = () => {
   return (
     // Added ARIA attribute for accessibility
-    <section className="collections" aria-labelledby="collection-heading">
-      <div className="section-header">
+    <section className="cl-section-container" aria-labelledby="collection-heading">
+      <div className="cl-section-header">
         <h2 id="collection-heading">Shop by Category</h2>
-        {/* CHANGED: This is now a link (<a>) for correct semantics */}
-        <a href="/catalogues" className="view-more">
-          View More →
-        </a>
       </div>
 
-      <div className="collection-slider">
+      <div className="cl-collection-slider">
         {maternityCollections.map((col) => (
           // CHANGED: The entire card is now a link
           <a
             href={col.href}
-            className="collection-card"
+            className="cl-collection-card"
             key={col.id}
             aria-label={`Shop the ${col.name} collection`}
           >

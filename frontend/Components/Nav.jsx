@@ -31,14 +31,14 @@ const MobileNavbar = () => {
         {/* Left - Hamburger for mobile */}
         {isMobile && (
           <button className="menu-btn" onClick={() => setMenuOpen(true)}>
-            <Menu size={26} />
+            <Menu size={22} />
           </button>
         )}
 
         {/* Center - Logo or Links */}
         {isMobile ? (
           <div className="nav-logo">MangaiWears</div>
-        ) : (
+        ) : ( 
           <>
             <div className="nav-logo">MangaiWears</div>
             <div className="nav-center-links">

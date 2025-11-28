@@ -37,12 +37,14 @@
 }
 
 .slider-overlay h1 {
+    font-family: "Gilda Display", serif;
   font-size: 3rem;
   font-weight: 700;
   margin: 0;
 }
 
 .slider-overlay p {
+    font-family: "Gilda Display", serif;
   margin-top: 10px;
   font-size: 1.3rem;
   opacity: 0.9;

@@ -1,28 +1,29 @@
 /* --- Base Styling --- */
-.testimonial-section {
+.ts-section-container {
   width: 100%;
   background: var(background-color);
-  
+
   /* Use 5vw padding to match other sections */
-  padding: 40px 5vw;
+  padding: 20px 5vw;
   font-family: "Inter", "Helvetica Neue", sans-serif;
 }
 
 /* --- Section Header (unchanged) --- */
-.section-header {
+.ts-section-header {
   display: flex;
-  justify-content: space-between;
+  /* justify-content: center; */
   align-items: center;
   margin-bottom: 20px;
 }
 
-.section-header h2 {
+.ts-section-header h2 {
+    font-family: "Italiana", sans-serif;
   font-size: clamp(1.4rem, 2vw, 1.8rem);
   font-weight: 600;
   color: #333;
 }
 
-.view-more {
+.ts-view-more {
   text-decoration: none;
   background: transparent;
   border: none;
@@ -33,13 +34,13 @@
   transition: color 0.3s ease;
 }
 
-.view-more:hover {
+.ts-view-more:hover {
   color: #000;
   text-decoration: underline;
 }
 
 /* --- Horizontal Slider (unchanged) --- */
-.testimonial-slider {
+.ts-testimonial-slider {
   display: flex;
   gap: 18px;
   overflow-x: auto;
@@ -48,46 +49,46 @@
   -webkit-overflow-scrolling: touch;
 }
 
-.testimonial-slider::-webkit-scrollbar {
+.ts-testimonial-slider::-webkit-scrollbar {
   display: none;
 }
 
 /* --- Testimonial Card Styling (CHANGED) --- */
-.testimonial-card {
+.ts-testimonial-card {
   /* --- KEY CHANGE 1 --- */
   /* Back to 75% on mobile. This shows one large card
-     plus a "peek" of the next, which is much better
-     for reading text and feels less "short". */
+     plus a "peek" of the next, which is much better
+     for reading text and feels less "short". */
   flex: 0 0 75%;
-  
+
   scroll-snap-align: start;
   background: #fff;
   border-radius: 12px;
   padding: 24px;
   border: 1px solid #eee;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
-  transition: transform 0.3s ease, 
-              box-shadow 0.3s ease,
-              flex-basis 0.4s ease;
+  transition: transform 0.3s ease,
+    box-shadow 0.3s ease,
+    flex-basis 0.4s ease;
 }
 
-.testimonial-card:hover {
+.ts-testimonial-card:hover {
   transform: translateY(-3px);
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.07);
 }
 
 /* --- Card Content (unchanged) --- */
-.star-rating {
+.ts-star-rating {
   font-size: 1.1rem;
-  color: #ffb400; 
+  color: #ffb400;
   margin-bottom: 12px;
 }
 
-.star-empty {
+.ts-star-empty {
   color: #ccc;
 }
 
-.quote-text {
+.ts-quote-text {
   font-size: 0.95rem;
   font-style: italic;
   color: #333;
@@ -100,34 +101,34 @@
   min-height: 6.0em;
 }
 
-.author-details {
-  margin-top: 20px; 
-  display: flex; 
-  align-items: center; 
-  gap: 12px; 
+.ts-author-details {
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
-.profile-image {
-  width: 48px; 
+.ts-profile-image {
+  width: 48px;
   height: 48px;
-  border-radius: 50%; 
-  object-fit: cover; 
-  border: 2px solid #f0f0f0; 
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #f0f0f0;
 }
 
-.author-text {
+.ts-author-text {
   display: flex;
   flex-direction: column;
 }
 
-.author-name {
+.ts-author-name {
   font-size: 0.9rem;
   font-weight: 600;
   color: #000;
-  margin-bottom: 2px; 
+  margin-bottom: 2px;
 }
 
-.verified-badge {
+.ts-verified-badge {
   font-size: 0.75rem;
   font-weight: 500;
   background-color: #e0f8e5;
@@ -143,7 +144,7 @@
 
 /* 🟦 Medium screens (≥768px): show 2 cards */
 @media (min-width: 768px) {
-  .testimonial-card {
+  .ts-testimonial-card {
     /* (50% width - half of the 18px gap) */
     flex: 0 0 calc(50% - 9px);
   }
@@ -151,8 +152,14 @@
 
 /* 🟨 Large desktops (≥1200px): show 3 cards that GROW */
 @media (min-width: 1200px) {
-  .testimonial-card {
+  .ts-testimonial-card {
     /* (33.33% width - 2/3 of the 18px gap) */
     flex: 0 0 calc(33.33% - 12px);
+  }
+}
+
+@media (min-width:1400px){
+  .ts-testimonial-card{
+    flex : 0 0 calc(30% - 40px);
   }
 }
