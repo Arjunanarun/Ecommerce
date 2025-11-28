@@ -4,6 +4,21 @@ import { useParams } from "react-router-dom";
 import './ProductDetail.css';
 import MobileNavbar from "./Nav";
 
+// Use the VITE_API_URL_PRO, fallback to http://localhost:4000/
+const BaseUrl = import.meta.env.VITE_API_URL || "http://localhost:4000/";
+
+// Helper function to safely join the BaseUrl and relative path,
+// ensuring only one slash between host and path.
+const joinUrl = (base, path) => {
+  // 1. Remove trailing slash from base if present
+  const cleanBase = base.replace(/\/$/, "");
+  // 2. Remove leading slash from path if present
+  const cleanPath = path.replace(/^\//, "");
+  // 3. Join them
+  return `${cleanBase}/${cleanPath}`;
+}
+
+
 const ProductDetail = () => {
   const { id } = useParams();
   const [productData, setProductData] = useState(null);
@@ -19,7 +34,7 @@ const ProductDetail = () => {
     try {
       setLoading(true);
       const response = await axios.get(
-        `http://localhost:4000/api/products/${id}`
+        joinUrl(BaseUrl, `api/products/${id}`) 
       );
       setProductData(response.data);
       if (response.data.images && response.data.images.length > 0) {
@@ -57,7 +72,7 @@ const ProductDetail = () => {
 
   if (loading) {
     return (
-      <div className="pd-loading">
+      <div className="pd-wrapper pd-loading">
         <div className="pd-loading-spinner"></div>
         <p>Loading product details...</p>
       </div>
@@ -66,7 +81,7 @@ const ProductDetail = () => {
 
   if (!productData) {
     return (
-      <div className="pd-error">
+      <div className="pd-wrapper pd-error">
         <h2>Product Not Found</h2>
         <p>Sorry, we couldn't find the product you're looking for.</p>
       </div>
@@ -75,138 +90,120 @@ const ProductDetail = () => {
 
   return (
     <>
-    <MobileNavbar />
-    <div className="pd-wrapper">
-      <div className="pd-main">
-        {/* Product Images Section */}
-        <div className="pd-images-section">
-          {/* Thumbnail Images - Left Side */}
-          <div className="pd-thumbnails">
-            {productData.images?.map((item, index) => (
-              <button
-                key={index}
-                onClick={() => setSelectedImage(item.url)}
-                className={`pd-thumbnail-btn ${
-                  item.url === selectedImage ? "pd-thumbnail-active" : ""
-                }`}
-              >
-                <img
-                  src={`http://localhost:4000${item.url}`}
-                  alt={`${productData.name} view ${index + 1}`}
-                  className="pd-thumbnail-img"
-                />
-              </button>
-            ))}
-          </div>
-
-          {/* Main Image */}
-          <div className="pd-main-image-container">
-            {selectedImage && (
-              <img
-                src={`http://localhost:4000${selectedImage}`}
-                className="pd-main-image"
-                alt={productData.name}
-              />
-            )}
-          </div>
-        </div>
-
-        {/* Product Info Section */}
-        <div className="pd-info-section">
-          <h1 className="pd-title">{productData.name}</h1>
-          
-          <div className="pd-rating">
-            <div className="pd-stars">★★★★★</div>
-            <span className="pd-review-count">(122)</span>
-          </div>
-
-          <div className="pd-pricing">
-            <span className="pd-current-price">
-              {currency}
-              {productData.price}
-            </span>
-          </div>
-
-          <p className="pd-description">
-            {productData.description}
-          </p>
-
-          {/* Size Selection */}
-          <div className="pd-size-section">
-            <p className="pd-size-label">Select Size</p>
-            <div className="pd-size-buttons">
-              {availableSizes.map((size, index) => (
+      <MobileNavbar />
+      <div className="pd-wrapper">
+        <div className="pd-main">
+          {/* Product Images Section */}
+          <div className="pd-images-section">
+            {/* Thumbnail Images - Left Side */}
+            <div className="pd-thumbnails">
+              {productData.images?.map((item, index) => (
                 <button
                   key={index}
-                  onClick={() => toggleSize(size)}
-                  className={`pd-size-btn ${
-                    selectedSizes.includes(size) ? "pd-size-btn-active" : ""
-                  }`}
+                  onClick={() => setSelectedImage(item.url)}
+                  className={`pd-thumbnail-btn ${item.url === selectedImage ? "pd-thumbnail-active" : ""
+                    }`}
                 >
-                  {size}
+                  <img
+                    src={joinUrl(BaseUrl, item.url)} 
+                    alt={`${productData.name} view ${index + 1}`}
+                    className="pd-thumbnail-img"
+                  />
                 </button>
               ))}
             </div>
-            {selectedSizes.length > 0 && (
-              <div className="pd-selected-sizes">
-                Selected: {selectedSizes.join(", ")}
+
+            {/* Main Image */}
+            <div className="pd-main-image-container">
+              {selectedImage && (
+                <img
+                  src={joinUrl(BaseUrl, selectedImage)} 
+                  className="pd-main-image"
+                  alt={productData.name}
+                />
+              )}
+            </div>
+          </div>
+
+          {/* Product Info Section */}
+          <div className="pd-info-section">
+            <h1 className="pd-title">{productData.name}</h1>
+
+            <div className="pd-rating">
+              <div className="pd-stars">★★★★★</div>
+              <span className="pd-review-count">(122)</span>
+            </div>
+
+            <div className="pd-pricing">
+              <span className="pd-current-price">
+                {currency}
+                {productData.price}
+              </span>
+            </div>
+
+            <p className="pd-description">
+              {productData.description}
+            </p>
+
+            {/* Size Selection */}
+            <div className="pd-size-section">
+              <p className="pd-size-label">Select Size</p>
+              <div className="pd-size-buttons">
+                {availableSizes.map((size, index) => (
+                  <button
+                    key={index}
+                    onClick={() => toggleSize(size)}
+                    className={`pd-size-btn ${selectedSizes.includes(size) ? "pd-size-btn-active" : ""
+                      }`}
+                  >
+                    {size}
+                  </button>
+                ))}
+              </div>
+              {selectedSizes.length > 0 && (
+                <div className="pd-selected-sizes">
+                  Selected: {selectedSizes.join(", ")}
+                </div>
+              )}
+            </div>
+
+            <button
+              onClick={() => addToCart(productData._id, selectedSizes)}
+              className={`pd-add-to-cart-btn ${selectedSizes.length === 0 ? "pd-add-to-cart-disabled" : ""
+                }`}
+              disabled={selectedSizes.length === 0}
+            >
+              Add To Cart
+            </button>
+
+            <div className="pd-extra-info">
+              <p>100% Original Product.</p>
+              <p>Cash on delivery is available on this product.</p>
+              <p>Easy return and exchange policy within 7 days.</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Description and Reviews Section */}
+        <div className="pd-bottom-section">
+          <div className="pd-tab-header">
+            <button
+              className={`pd-tab ${activeTab === "reviews" ? "pd-tab-active" : ""}`}
+              onClick={() => setActiveTab("reviews")}
+            >
+              Reviews (122)
+            </button>
+          </div>
+
+          <div className="pd-tab-content">
+            {activeTab === "reviews" && (
+              <div className="pd-reviews-content">
+                <p>Customer reviews will be displayed here.</p>
               </div>
             )}
           </div>
-
-          <button
-            onClick={() => addToCart(productData._id, selectedSizes)}
-            className={`pd-add-to-cart-btn ${
-              selectedSizes.length === 0 ? "pd-add-to-cart-disabled" : ""
-            }`}
-            disabled={selectedSizes.length === 0}
-          >
-            Add To Cart
-          </button>
-
-          <div className="pd-extra-info">
-            <p>100% Original Product.</p>
-            <p>Cash on delivery is available on this product.</p>
-            <p>Easy return and exchange policy within 7 days.</p>
-          </div>
         </div>
       </div>
-
-      {/* Description and Reviews Section */}
-      <div className="pd-bottom-section">
-        <div className="pd-tab-header">
-          {/* <button
-            className={`pd-tab ${activeTab === "description" ? "pd-tab-active" : ""}`}
-            onClick={() => setActiveTab("description")}
-          >
-            Description
-          </button> */}
-          <button
-            className={`pd-tab ${activeTab === "reviews" ? "pd-tab-active" : ""}`}
-            onClick={() => setActiveTab("reviews")}
-          >
-            Reviews (122)
-          </button>
-        </div>
-        
-        <div className="pd-tab-content">
-          {/* {activeTab === "description" && (
-            <>
-              <p>
-                {productData.description}
-              </p>
-              
-            </>
-          )} */}
-          
-          {activeTab === "reviews" && (
-            <div className="pd-reviews-content">
-              <p>Customer reviews will be displayed here.</p>
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
     </>
   );
 };

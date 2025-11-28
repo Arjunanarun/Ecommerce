@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import "./NewArraival.css";
 import axios from "axios";
 import ProductCard from "../Components/ProductCard";
-
+const BaseUrl = import.meta.env.VITE_API_URL || "http://localhost:4000/";
 // --- KEY CHANGE 1: Added 'price' to all products ---
 
 
@@ -13,7 +13,7 @@ export default function NewArrivalSection() {
 
   const getLatestProducts = async () => {
     try {
-      const response = await axios.get("http://localhost:4000/api/products/");
+      const response = await axios.get(`${BaseUrl}api/products`);
       const allProducts = response.data;
 
       const latest = allProducts;
