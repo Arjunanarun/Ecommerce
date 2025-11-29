@@ -9,37 +9,38 @@ const router = express.Router();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// Load BASE_URL from env (must be set in Render dashboard)
+const BASE_URL = process.env.BASE_URL;
+
 // Storage config
 const storage = multer.diskStorage({
   destination(req, file, cb) {
-    // ✅ **THIS IS THE FIX**
-    // Go up two levels (from 'backend/Routes' to 'YourProject/uploads')
-    cb(null, path.join(__dirname, '../../uploads'));
+    // Uploads folder (one level above backend folder)
+    cb(null, path.join(__dirname, "../../uploads"));
   },
   filename(req, file, cb) {
-    // Use a date for a unique name
     cb(null, `${Date.now()}-${file.originalname}`);
   },
 });
 
-// Check file type (optional but recommended)
+// File type filter
 function checkFileType(file, cb) {
   const filetypes = /jpg|jpeg|png|webp/;
   const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
   const mimetype = filetypes.test(file.mimetype);
 
   if (extname && mimetype) {
-    return cb(null, true);
+    cb(null, true);
   } else {
-    cb('Error: Images Only!');
+    cb("Error: Images Only!");
   }
 }
 
-const upload = multer({ 
-  storage: storage,
-  fileFilter: function (req, file, cb) {
+const upload = multer({
+  storage,
+  fileFilter(req, file, cb) {
     checkFileType(file, cb);
-  }
+  },
 });
 
 // Upload route
@@ -48,10 +49,12 @@ router.post("/", upload.single("image"), (req, res) => {
     return res.status(400).json({ message: "No file uploaded" });
   }
 
-  // Return the correct public URL path
-  // Make sure your file path has forward slashes
-  const filePath = `/uploads/${req.file.filename}`;
-  res.status(201).json({ url: filePath.replace(/\\/g, '/') });
+  // Build the full public URL (important!)
+  const fullImageUrl = `${BASE_URL}/uploads/${req.file.filename}`;
+
+  res.status(201).json({
+    url: fullImageUrl,
+  });
 });
 
 export default router;

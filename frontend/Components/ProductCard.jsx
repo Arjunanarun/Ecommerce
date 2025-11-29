@@ -16,7 +16,7 @@ const ProductCard = ({ id, image, name, price, desc, discountprice,  isBestSelle
                 {/* Best Seller tag */}
                 {isBestSeller && <div className="best-seller-tag">Best Seller</div>}
                 
-                <img src={`http://localhost:4000${image}`} alt={name} className='product-img' />
+                <img src={image} alt={name} className='product-img' />
             </div>
 
             

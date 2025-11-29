@@ -4,7 +4,6 @@ import { useParams } from "react-router-dom";
 import './ProductDetail.css';
 import MobileNavbar from "./Nav";
 
-// Use the VITE_API_URL_PRO, fallback to http://localhost:4000/
 const BaseUrl = import.meta.env.VITE_API_URL || "http://localhost:4000/";
 
 // Helper function to safely join the BaseUrl and relative path,
@@ -33,8 +32,9 @@ const ProductDetail = () => {
   const fetchProductDetail = async () => {
     try {
       setLoading(true);
+      console.log("url in details", joinUrl(BaseUrl, `api/products/${id}`));
       const response = await axios.get(
-        joinUrl(BaseUrl, `api/products/${id}`) 
+        joinUrl(BaseUrl, `api/products/${id}`)
       );
       setProductData(response.data);
       if (response.data.images && response.data.images.length > 0) {
@@ -105,10 +105,11 @@ const ProductDetail = () => {
                     }`}
                 >
                   <img
-                    src={joinUrl(BaseUrl, item.url)} 
+                    src={item.url}
                     alt={`${productData.name} view ${index + 1}`}
                     className="pd-thumbnail-img"
                   />
+
                 </button>
               ))}
             </div>
@@ -117,10 +118,11 @@ const ProductDetail = () => {
             <div className="pd-main-image-container">
               {selectedImage && (
                 <img
-                  src={joinUrl(BaseUrl, selectedImage)} 
+                  src={selectedImage}
                   className="pd-main-image"
                   alt={productData.name}
                 />
+
               )}
             </div>
           </div>
